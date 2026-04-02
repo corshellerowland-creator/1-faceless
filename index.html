@@ -1,152 +1,968 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faceless Trader Hybrid</title>
-<style>
-:root{
-  --accent:#ff00cc;
-  --accent2:#8a2cff;
-  --bg:#05050c;
-}
-body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:white;
-}
-.header{
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  align-items:center;
-}
-.title{
-  font-size:22px;
-  font-weight:bold;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  color:transparent;
-}
-.style-btn{
-  padding:6px 10px;
-  border:1px solid #555;
-  border-radius:10px;
-  cursor:pointer;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  padding:10px;
-}
-.card{
-  padding:12px;
-  border-radius:14px;
-  background:#111;
-  text-align:center;
-  cursor:pointer;
-}
-.card.active{
-  box-shadow:0 0 15px var(--accent);
-}
-.section{
-  display:none;
-  padding:15px;
-}
-.section.active{
-  display:block;
-}
-input{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:10px;
-  border:none;
-  background:#111;
-  color:white;
-}
-button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:10px;
-  border:none;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:white;
-}
-img.preview{
-  width:100%;
-  margin-top:10px;
-  border-radius:10px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ICC Strategy Module</title>
+  <style>
+    :root {
+      --bg: #09070f;
+      --panel: rgba(20,16,33,0.92);
+      --panel-2: rgba(28,21,46,0.95);
+      --line: rgba(255,255,255,0.08);
+      --text: #f4eeff;
+      --muted: #b9abd6;
+      --pink: #ff4fd8;
+      --purple: #8d5bff;
+      --teal: #42f5d7;
+      --yellow: #ffd86b;
+      --red: #ff6e8a;
+      --green: #63ffb4;
+      --shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 0 22px rgba(141,91,255,0.18);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(255,79,216,0.18), transparent 24%),
+        radial-gradient(circle at top left, rgba(66,245,215,0.12), transparent 18%),
+        linear-gradient(180deg, #07050d, #0d0917 60%, #09070f);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .app {
+      max-width: 460px;
+      margin: 0 auto;
+      padding-bottom: 28px;
+    }
+
+    .header, .card, .modal-content, .journal-card, .warning-overlay {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .header {
+      background: linear-gradient(180deg, rgba(24,19,40,0.94), rgba(14,11,24,0.94));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+    }
+
+    .strategy-pills, .toggle-row, .session-row, .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.1px;
+    }
+
+    .pill.active {
+      color: white;
+      border-color: rgba(255,79,216,0.45);
+      box-shadow: 0 0 0 1px rgba(255,79,216,0.18), 0 0 18px rgba(255,79,216,0.24);
+      background: linear-gradient(180deg, rgba(255,79,216,0.24), rgba(141,91,255,0.16));
+    }
+
+    h1 {
+      margin: 14px 0 4px;
+      font-size: 26px;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .score-shell {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+
+    .score-card, .decision-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .score-value {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .decision-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .3px;
+    }
+
+    .decision-a { background: rgba(99,255,180,0.14); color: var(--green); }
+    .decision-b { background: rgba(255,216,107,0.14); color: var(--yellow); }
+    .decision-wait { background: rgba(255,110,138,0.14); color: var(--red); }
+    .decision-no { background: rgba(255,110,138,0.22); color: white; }
+
+    .progress {
+      margin-top: 14px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--teal));
+      transition: width 0.25s ease;
+    }
+
+    .content { margin-top: 16px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(24,18,40,0.95), rgba(13,10,22,0.95));
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 22px;
+      padding: 15px;
+      box-shadow: var(--shadow);
+      min-height: 120px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -30% -55% auto;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(255,79,216,0.18), transparent 70%);
+      transform: rotate(-14deg);
+      pointer-events: none;
+    }
+
+    .card.small { min-height: 100px; }
+    .card h3 { margin: 0; font-size: 17px; }
+    .card p { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .mini-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      background: rgba(66,245,215,0.1);
+      border: 1px solid rgba(66,245,215,0.18);
+      border-radius: 999px;
+      padding: 5px 8px;
+    }
+
+    .status-label {
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: none;
+      padding: 14px 12px;
+      border-radius: 18px;
+      font-weight: 800;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(255,79,216,0.28), rgba(141,91,255,0.24));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .btn.secondary { background: rgba(255,255,255,0.05); color: var(--muted); }
+    .btn.red { background: linear-gradient(180deg, rgba(255,110,138,0.28), rgba(255,110,138,0.16)); }
+    .btn.green { background: linear-gradient(180deg, rgba(99,255,180,0.28), rgba(66,245,215,0.16)); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .modal, .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(3,3,7,0.68);
+      z-index: 20;
+      padding: 12px;
+    }
+
+    .modal.show, .overlay.show { display: flex; }
+
+    .modal-content, .warning-overlay {
+      width: min(460px, 100%);
+      background: linear-gradient(180deg, rgba(22,17,37,0.98), rgba(11,9,19,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 28px 28px 18px 18px;
+      padding: 18px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 0 28px rgba(141,91,255,0.18);
+      max-height: 86vh;
+      overflow: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .modal-head h2, .warning-overlay h2 { margin: 0; }
+    .close {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .item {
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .item-title { font-weight: 700; }
+    .item-desc { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.35; }
+    .points { font-size: 12px; color: var(--teal); font-weight: 800; }
+
+    .switches {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .chip.on {
+      color: white;
+      background: linear-gradient(180deg, rgba(99,255,180,0.22), rgba(66,245,215,0.12));
+      border-color: rgba(66,245,215,0.28);
+    }
+
+    .chip.fail {
+      background: linear-gradient(180deg, rgba(255,110,138,0.22), rgba(255,110,138,0.12));
+      border-color: rgba(255,110,138,0.28);
+      color: white;
+    }
+
+    .info-box, .danger-box {
+      margin-top: 12px;
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .info-box { background: rgba(66,245,215,0.08); color: #cffff7; border: 1px solid rgba(66,245,215,0.16); }
+    .danger-box { background: rgba(255,110,138,0.1); color: #ffdce4; border: 1px solid rgba(255,110,138,0.16); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .journal-card {
+      margin-top: 16px;
+      background: linear-gradient(180deg, rgba(21,16,35,0.95), rgba(11,9,19,0.95));
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      color: white;
+      padding: 12px;
+      font: inherit;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+
+    .preview {
+      margin-top: 10px;
+      display: none;
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .warning-overlay ul {
+      padding-left: 20px;
+      color: #ffdce4;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <section class="header">
+      <div class="strategy-pills">
+        <div class="pill">EMA Strategy</div>
+        <div class="pill">Supply &amp; Demand</div>
+        <div class="pill active">ICC Strategy</div>
+      </div>
 
-<div class="header">
-<div class="title">Faceless Trader</div>
-<div class="style-btn" onclick="toggleTheme()">Style</div>
-</div>
+      <h1>ICC Strategy</h1>
+      <div class="subtitle">Indication • Correction • Continuation</div>
 
-<div class="grid">
-<div class="card active" onclick="showSection(event,'home')">Home</div>
-<div class="card" onclick="showSection(event,'strategy')">Strategy</div>
-<div class="card" onclick="showSection(event,'pnl')">PnL</div>
-<div class="card" onclick="showSection(event,'journal')">Journal</div>
-</div>
+      <div class="toggle-row" id="tfRow">
+        <button class="pill active" data-tf="1M">1M ⚡</button>
+        <button class="pill" data-tf="5M">5M 🧘🏽‍♀️</button>
+      </div>
 
-<div id="home" class="section active">
-<h2>Home</h2>
-<p>Main character (clean)</p>
-</div>
+      <div class="session-row" id="sessionRow" style="margin-top:10px;">
+        <button class="pill active" data-session="Asia">Asia</button>
+        <button class="pill" data-session="London">London</button>
+        <button class="pill" data-session="NY">NY</button>
+      </div>
 
-<div id="strategy" class="section">
-<h2>Strategy</h2>
-<p>Thinking mode character here</p>
-</div>
+      <div class="score-shell">
+        <div class="score-card">
+          <div class="score-value" id="scoreValue">0%</div>
+          <div class="muted">Setup Strength</div>
+          <div class="decision-badge decision-wait" id="gradeBadge">WAIT</div>
+        </div>
+        <div class="decision-card">
+          <div style="font-size:13px; color:var(--muted);">Status</div>
+          <div id="decisionTitle" style="font-size:20px; font-weight:800; margin-top:6px;">No Trade Yet</div>
+          <div id="decisionSub" class="muted" style="margin-top:8px;">Complete your checklist to unlock a clean decision.</div>
+        </div>
+      </div>
 
-<div id="pnl" class="section">
-<h2>PnL</h2>
-<p>Execution character here</p>
-</div>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    </section>
 
-<div id="journal" class="section">
-<h2>Journal</h2>
-<input placeholder="PnL">
-<input type="file" accept="image/*" onchange="previewImage(event)">
-<img id="imgPreview" class="preview"/>
-<button>Save Entry</button>
-</div>
+    <section class="content">
+      <div class="grid">
+        <div class="card" data-phase="bias">
+          <div class="mini-tag" id="tag-bias">0/4</div>
+          <h3>Bias + Setup</h3>
+          <p>HTF bias, swing levels, pre-indication, target.</p>
+          <div class="status-label" id="label-bias">Not complete</div>
+        </div>
 
-<script>
-function showSection(e,id){
- document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
- document.getElementById(id).classList.add('active');
- document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
- e.target.classList.add('active');
-}
+        <div class="card" data-phase="indication">
+          <div class="mini-tag" id="tag-indication">0/3</div>
+          <h3>Indication</h3>
+          <p><span id="indTfLabel">1M</span> close past level. Confirm direction. No entry here.</p>
+          <div class="status-label" id="label-indication">Not complete</div>
+        </div>
 
-let mode=0;
-function toggleTheme(){
- mode++;
- if(mode%2==0){
-  document.documentElement.style.setProperty('--accent','#ff00cc');
-  document.documentElement.style.setProperty('--accent2','#8a2cff');
- } else {
-  document.documentElement.style.setProperty('--accent','#00ffcc');
-  document.documentElement.style.setProperty('--accent2','#00cc88');
- }
-}
+        <div class="card" data-phase="correction">
+          <div class="mini-tag" id="tag-correction">0/4</div>
+          <h3>Correction</h3>
+          <p>Clean pullback, internal shift, retest, no wrong-side break.</p>
+          <div class="status-label" id="label-correction">Not complete</div>
+        </div>
 
-function previewImage(e){
- const reader = new FileReader();
- reader.onload = function(){
-  document.getElementById('imgPreview').src = reader.result;
- }
- reader.readAsDataURL(e.target.files[0]);
-}
-</script>
+        <div class="card" data-phase="entry">
+          <div class="mini-tag" id="tag-entry">0/5</div>
+          <h3>Continuation Entry</h3>
+          <p><span id="entryTfLabel">1M</span> close back through level, limit entry, SL, TP1/TP2, no chasing.</p>
+          <div class="status-label" id="label-entry">Not complete</div>
+        </div>
 
+        <div class="card small" data-open="walkaway">
+          <h3>Walk Away Rules</h3>
+          <p>Auto no-trade conditions and discipline lockouts.</p>
+          <div class="status-label" id="walkawayCount">0 active</div>
+        </div>
+
+        <div class="card small" id="takeTradeCard">
+          <h3>Take Trade</h3>
+          <p>Push ICC result into journal with score, session, timeframe, and notes.</p>
+          <div class="status-label" id="takeTradeStatus">Locked</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn green" id="journalBtn">⭐ Journal It</button>
+        <button class="btn secondary" id="resetBtn">🔄 Reset</button>
+        <button class="btn red" id="lockBtn">🚫 Rules</button>
+      </div>
+
+      <div class="journal-card" id="journalCard">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:19px; font-weight:800;">ICC Journal Entry</div>
+            <div class="muted">Auto-filled from your checklist. Add your chart screenshot too.</div>
+          </div>
+          <div class="decision-badge decision-wait" id="journalGrade">WAIT</div>
+        </div>
+
+        <div class="journal-grid">
+          <div>
+            <label>Strategy</label>
+            <input value="ICC" readonly>
+          </div>
+          <div>
+            <label>Execution Mode</label>
+            <input id="journalTf" value="1M" readonly>
+          </div>
+          <div>
+            <label>Session</label>
+            <input id="journalSession" value="Asia" readonly>
+          </div>
+          <div>
+            <label>Score</label>
+            <input id="journalScore" value="0%" readonly>
+          </div>
+          <div>
+            <label>Entry</label>
+            <input placeholder="e.g. 21245.5">
+          </div>
+          <div>
+            <label>Stop Loss</label>
+            <input placeholder="e.g. 21233.0">
+          </div>
+          <div>
+            <label>TP1</label>
+            <input placeholder="Target 1">
+          </div>
+          <div>
+            <label>TP2</label>
+            <input placeholder="Target 2">
+          </div>
+          <div class="full">
+            <label>Checklist Summary</label>
+            <textarea id="summaryField" readonly></textarea>
+          </div>
+          <div class="full">
+            <label>Mistake / Lesson</label>
+            <textarea placeholder="What did price do? What did you do right or wrong?"></textarea>
+          </div>
+          <div class="full">
+            <label>Add Trade Screenshot</label>
+            <input type="file" id="imageUpload" accept="image/*">
+            <img id="previewImg" class="preview" alt="Trade screenshot preview">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">Built to match your dark neon app layout with grid buttons, live scoring, 1M / 5M toggle, and journal support.</div>
+    </section>
+  </div>
+
+  <div class="modal" id="phaseModal">
+    <div class="modal-content">
+      <div class="modal-head">
+        <div>
+          <h2 id="modalTitle">Phase</h2>
+          <div class="muted" id="modalSubtitle">Checklist</div>
+        </div>
+        <button class="close" id="closeModal">×</button>
+      </div>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button class="btn secondary" id="resetPhaseBtn">Reset Phase</button>
+        <button class="btn" id="donePhaseBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="warningOverlay">
+    <div class="warning-overlay">
+      <h2>❌ No Trade</h2>
+      <div class="muted" style="margin-top:6px;">A hard rule was violated. Your trade stays locked until you clear the issue.</div>
+      <ul id="warningList"></ul>
+      <div class="modal-actions">
+        <button class="btn secondary" id="warningBackBtn">Go Back</button>
+        <button class="btn red" id="warningResetBtn">Reset All</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      tf: '1M',
+      session: 'Asia',
+      activePhase: null,
+      phases: {
+        bias: [
+          { key: 'htf', title: 'HTF Bias Clear', desc: '1H / 4H aligned with the trade direction.', points: 15, hardFail: true },
+          { key: 'swing', title: 'Swing High / Low Marked', desc: 'Recent structure clearly mapped.', points: 5 },
+          { key: 'pre', title: 'Pre-Indication Level Marked', desc: 'Key level defined before entry logic.', points: 5 },
+          { key: 'target', title: 'Target Identified', desc: 'Next opposing area or objective is marked.', points: 0 }
+        ],
+        indication: [
+          { key: 'closePast', title: () => `${state.tf} candle CLOSES past pre-indication level`, desc: 'No wick-only confirmation.', points: 10, hardFail: true, failReason: 'Wick only / no candle close' },
+          { key: 'bull', title: 'Bullish confirmation', desc: 'Only check if the setup is bullish.', points: 5 },
+          { key: 'bear', title: 'Bearish confirmation', desc: 'Only check if the setup is bearish.', points: 5 }
+        ],
+        correction: [
+          { key: 'pullback', title: 'Price pulled back cleanly', desc: 'Correction is controlled, not chaotic.', points: 5 },
+          { key: 'internal', title: 'Internal structure shift', desc: 'You see the inner shift you need before continuation.', points: 10 },
+          { key: 'retest', title: 'Retest completed', desc: 'Retest plus close, not just touch.', points: 5 },
+          { key: 'wrongBreak', title: 'Wrong-side break happened', desc: 'Trigger this as a fail if structure broke the wrong way.', points: 0, hardFailToggle: true, failReason: 'Structure broke wrong way' }
+        ],
+        entry: [
+          { key: 'closeBack', title: () => `${state.tf} close back through level`, desc: 'Continuation close is confirmed.', points: 10, hardFail: true, failReason: 'No valid continuation close' },
+          { key: 'limit', title: 'Limit order placed', desc: 'No market-order chase.', points: 5, hardFail: true, failReason: 'Limit not respected / entered anyway' },
+          { key: 'sl', title: 'Stop loss placed', desc: 'Stop is set outside invalidation.', points: 5, hardFail: true, failReason: 'No stop loss placed' },
+          { key: 'tp', title: 'TP1 + TP2 mapped', desc: 'Profit plan is defined before entry.', points: 5 },
+          { key: 'chasing', title: 'Chased entry', desc: 'Trigger this as a fail if you chased instead of waiting.', points: 0, hardFailToggle: true, failReason: 'Chased entry during pullback / after missed fill' }
+        ]
+      },
+      checks: {},
+      walkAway: {
+        noBias: { title: 'No HTF bias', active: false },
+        wickOnly: { title: 'Wick through level', active: false },
+        earlyEntry: { title: 'Entered during pullback', active: false },
+        limitIgnored: { title: 'Limit not filled but entered anyway', active: false },
+        emotional: { title: 'Rushed / emotional', active: false }
+      }
+    };
+
+    const phaseMeta = {
+      bias: { title: 'Bias + Setup', subtitle: '25 pts • HTF context first' },
+      indication: { title: 'Indication', subtitle: '15 pts • Confirmation only, no entry yet' },
+      correction: { title: 'Correction', subtitle: '20 pts • Pullback, shift, retest' },
+      entry: { title: 'Continuation Entry', subtitle: '25 pts • Confirmation + execution' }
+    };
+
+    const modal = document.getElementById('phaseModal');
+    const modalBody = document.getElementById('modalBody');
+    const warningOverlay = document.getElementById('warningOverlay');
+
+    function defaultCheckState() {
+      Object.keys(state.phases).forEach(phase => {
+        state.checks[phase] = {};
+        state.phases[phase].forEach(item => {
+          state.checks[phase][item.key] = false;
+        });
+      });
+    }
+    defaultCheckState();
+
+    function getTitle(item) {
+      return typeof item.title === 'function' ? item.title() : item.title;
+    }
+
+    function openPhase(phase) {
+      state.activePhase = phase;
+      const meta = phaseMeta[phase];
+      document.getElementById('modalTitle').textContent = meta.title;
+      document.getElementById('modalSubtitle').textContent = meta.subtitle;
+      modalBody.innerHTML = '';
+
+      state.phases[phase].forEach(item => {
+        const wrap = document.createElement('div');
+        wrap.className = 'item';
+        const isOn = !!state.checks[phase][item.key];
+        const chips = document.createElement('div');
+        chips.className = 'switches';
+
+        const yesChip = document.createElement('button');
+        yesChip.className = 'chip' + (isOn ? ' on' : '');
+        yesChip.textContent = item.hardFailToggle ? 'Trigger Fail' : 'Check';
+        yesChip.onclick = () => {
+          state.checks[phase][item.key] = !state.checks[phase][item.key];
+          openPhase(phase);
+          updateUI();
+        };
+        chips.appendChild(yesChip);
+
+        if (!item.hardFailToggle) {
+          const clearChip = document.createElement('button');
+          clearChip.className = 'chip';
+          clearChip.textContent = 'Clear';
+          clearChip.onclick = () => {
+            state.checks[phase][item.key] = false;
+            openPhase(phase);
+            updateUI();
+          };
+          chips.appendChild(clearChip);
+        }
+
+        wrap.innerHTML = `
+          <div class="item-top">
+            <div class="item-title">${getTitle(item)}</div>
+            <div class="points">${item.points ? '+' + item.points : 'Rule'}</div>
+          </div>
+          <div class="item-desc">${item.desc}</div>
+        `;
+        wrap.appendChild(chips);
+        modalBody.appendChild(wrap);
+      });
+
+      if (phase === 'indication') {
+        const info = document.createElement('div');
+        info.className = 'danger-box';
+        info.textContent = 'Do not enter during indication. It confirms direction only.';
+        modalBody.appendChild(info);
+      }
+      if (phase === 'correction') {
+        const info = document.createElement('div');
+        info.className = 'info-box';
+        info.textContent = 'Correction completes at retest + close, not just the pullback.';
+        modalBody.appendChild(info);
+      }
+      if (phase === 'bias') {
+        const info = document.createElement('div');
+        info.className = 'danger-box';
+        info.textContent = 'No HTF bias = automatic no trade.';
+        modalBody.appendChild(info);
+      }
+
+      modal.classList.add('show');
+    }
+
+    function countPhase(phase) {
+      const items = state.phases[phase];
+      let checked = 0;
+      items.forEach(item => {
+        if (state.checks[phase][item.key]) checked += 1;
+      });
+      return `${checked}/${items.length}`;
+    }
+
+    function phaseComplete(phase) {
+      const items = state.phases[phase];
+      const totalPossible = items.filter(i => !i.hardFailToggle).length;
+      const checked = items.filter(i => !i.hardFailToggle && state.checks[phase][i.key]).length;
+      return totalPossible > 0 && checked === totalPossible;
+    }
+
+    function getHardFails() {
+      const fails = [];
+      Object.keys(state.walkAway).forEach(k => {
+        if (state.walkAway[k].active) fails.push(state.walkAway[k].title);
+      });
+
+      Object.keys(state.phases).forEach(phase => {
+        state.phases[phase].forEach(item => {
+          const checked = !!state.checks[phase][item.key];
+          if (item.hardFailToggle && checked) fails.push(item.failReason || getTitle(item));
+          if (item.hardFail && !item.hardFailToggle) {
+            if ((item.key === 'htf' && phase === 'bias' && !checked) ||
+                ((item.key === 'closePast' || item.key === 'closeBack' || item.key === 'limit' || item.key === 'sl') && false)) {
+              // these are required but not all missing states are hard fails until the user wants to trade
+            }
+          }
+        });
+      });
+      return fails;
+    }
+
+    function compute() {
+      let score = 0;
+      let possible = 0;
+      Object.keys(state.phases).forEach(phase => {
+        state.phases[phase].forEach(item => {
+          if (item.points > 0) {
+            possible += item.points;
+            if (state.checks[phase][item.key]) score += item.points;
+          }
+        });
+      });
+
+      const fails = getHardFails();
+      const pct = Math.round((score / possible) * 100);
+      let grade = 'WAIT';
+      let decision = 'Wait';
+      let sub = 'Needs more confirmation.';
+      let gradeClass = 'decision-wait';
+      let canTrade = false;
+
+      const required = ['htf', 'closePast', 'closeBack', 'limit', 'sl'];
+      const requiredMet = required.every(key => {
+        const phase = Object.keys(state.phases).find(p => state.phases[p].some(i => i.key === key));
+        return state.checks[phase]?.[key];
+      });
+
+      if (fails.length > 0) {
+        grade = 'NO TRADE';
+        decision = 'Rule Violation';
+        sub = 'A hard rule was triggered. Reset or fix before trading.';
+        gradeClass = 'decision-no';
+      } else if (requiredMet && pct >= 90) {
+        grade = 'A+ SETUP';
+        decision = 'Execute Trade';
+        sub = 'Clean confirmation, strong structure, valid execution plan.';
+        gradeClass = 'decision-a';
+        canTrade = true;
+      } else if (requiredMet && pct >= 75) {
+        grade = 'B SETUP';
+        decision = 'Trade With Caution';
+        sub = 'Valid, but not perfect. Keep size disciplined.';
+        gradeClass = 'decision-b';
+        canTrade = true;
+      } else if (pct < 75) {
+        grade = 'WAIT';
+        decision = 'Not Clean Yet';
+        sub = 'More confirmation needed before entry.';
+        gradeClass = 'decision-wait';
+      }
+
+      return { pct, grade, decision, sub, gradeClass, fails, canTrade };
+    }
+
+    function updateUI() {
+      const result = compute();
+      document.getElementById('scoreValue').textContent = `${result.pct}%`;
+      document.getElementById('decisionTitle').textContent = result.decision;
+      document.getElementById('decisionSub').textContent = result.sub;
+      const badge = document.getElementById('gradeBadge');
+      badge.textContent = result.grade;
+      badge.className = `decision-badge ${result.gradeClass}`;
+      document.getElementById('progressFill').style.width = `${result.pct}%`;
+      document.getElementById('journalGrade').textContent = result.grade;
+      document.getElementById('journalGrade').className = `decision-badge ${result.gradeClass}`;
+      document.getElementById('journalTf').value = state.tf;
+      document.getElementById('journalSession').value = state.session;
+      document.getElementById('journalScore').value = `${result.pct}%`;
+      document.getElementById('indTfLabel').textContent = state.tf;
+      document.getElementById('entryTfLabel').textContent = state.tf;
+
+      ['bias','indication','correction','entry'].forEach(phase => {
+        document.getElementById(`tag-${phase}`).textContent = countPhase(phase);
+        document.getElementById(`label-${phase}`).textContent = phaseComplete(phase) ? 'Complete' : 'Not complete';
+      });
+
+      const activeWalkAways = Object.values(state.walkAway).filter(v => v.active).length;
+      document.getElementById('walkawayCount').textContent = `${activeWalkAways} active`;
+      document.getElementById('takeTradeStatus').textContent = result.canTrade ? 'Unlocked' : 'Locked';
+
+      const summary = [];
+      summary.push(`Timeframe: ${state.tf}`);
+      summary.push(`Session: ${state.session}`);
+      summary.push(`Grade: ${result.grade}`);
+      summary.push(`Score: ${result.pct}%`);
+      summary.push(`Bias complete: ${phaseComplete('bias') ? 'Yes' : 'No'}`);
+      summary.push(`Indication complete: ${phaseComplete('indication') ? 'Yes' : 'No'}`);
+      summary.push(`Correction complete: ${phaseComplete('correction') ? 'Yes' : 'No'}`);
+      summary.push(`Entry complete: ${phaseComplete('entry') ? 'Yes' : 'No'}`);
+      if (result.fails.length) summary.push(`Violations: ${result.fails.join(', ')}`);
+      document.getElementById('summaryField').value = summary.join('\n');
+
+      if (result.fails.length) {
+        const list = document.getElementById('warningList');
+        list.innerHTML = result.fails.map(f => `<li>${f}</li>`).join('');
+      }
+    }
+
+    document.querySelectorAll('[data-phase]').forEach(card => {
+      card.addEventListener('click', () => openPhase(card.dataset.phase));
+    });
+
+    document.getElementById('closeModal').onclick = () => modal.classList.remove('show');
+    document.getElementById('donePhaseBtn').onclick = () => modal.classList.remove('show');
+    document.getElementById('resetPhaseBtn').onclick = () => {
+      if (!state.activePhase) return;
+      Object.keys(state.checks[state.activePhase]).forEach(k => state.checks[state.activePhase][k] = false);
+      openPhase(state.activePhase);
+      updateUI();
+    };
+
+    document.querySelectorAll('#tfRow .pill').forEach(btn => {
+      btn.onclick = () => {
+        state.tf = btn.dataset.tf;
+        document.querySelectorAll('#tfRow .pill').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        updateUI();
+      };
+    });
+
+    document.querySelectorAll('#sessionRow .pill').forEach(btn => {
+      btn.onclick = () => {
+        state.session = btn.dataset.session;
+        document.querySelectorAll('#sessionRow .pill').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        updateUI();
+      };
+    });
+
+    document.getElementById('journalBtn').onclick = () => {
+      document.getElementById('journalCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    document.getElementById('resetBtn').onclick = resetAll;
+    document.getElementById('warningResetBtn').onclick = () => { resetAll(); warningOverlay.classList.remove('show'); };
+    document.getElementById('warningBackBtn').onclick = () => warningOverlay.classList.remove('show');
+
+    function resetAll() {
+      defaultCheckState();
+      Object.keys(state.walkAway).forEach(k => state.walkAway[k].active = false);
+      updateUI();
+      modal.classList.remove('show');
+    }
+
+    document.getElementById('lockBtn').onclick = openWalkAway;
+    document.querySelector('[data-open="walkaway"]').onclick = openWalkAway;
+
+    function openWalkAway() {
+      state.activePhase = null;
+      document.getElementById('modalTitle').textContent = 'Walk Away Rules';
+      document.getElementById('modalSubtitle').textContent = 'Global no-trade conditions';
+      modalBody.innerHTML = '';
+
+      Object.entries(state.walkAway).forEach(([key, value]) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'item';
+        wrap.innerHTML = `
+          <div class="item-top">
+            <div class="item-title">${value.title}</div>
+            <div class="points">Rule</div>
+          </div>
+          <div class="item-desc">If active, the setup is locked until you reset or clear it.</div>
+        `;
+        const switches = document.createElement('div');
+        switches.className = 'switches';
+        const chip = document.createElement('button');
+        chip.className = 'chip' + (value.active ? ' fail' : '');
+        chip.textContent = value.active ? 'Active Fail' : 'Mark Fail';
+        chip.onclick = () => {
+          state.walkAway[key].active = !state.walkAway[key].active;
+          openWalkAway();
+          updateUI();
+        };
+        const clear = document.createElement('button');
+        clear.className = 'chip';
+        clear.textContent = 'Clear';
+        clear.onclick = () => {
+          state.walkAway[key].active = false;
+          openWalkAway();
+          updateUI();
+        };
+        switches.appendChild(chip);
+        switches.appendChild(clear);
+        wrap.appendChild(switches);
+        modalBody.appendChild(wrap);
+      });
+
+      const warn = document.createElement('div');
+      warn.className = 'danger-box';
+      warn.textContent = 'Golden rule: no candle close = no confirmation = no trade.';
+      modalBody.appendChild(warn);
+      modal.classList.add('show');
+    }
+
+    document.getElementById('takeTradeCard').onclick = () => {
+      const result = compute();
+      if (result.fails.length) {
+        warningOverlay.classList.add('show');
+      } else {
+        document.getElementById('journalCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    document.getElementById('imageUpload').addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      const preview = document.getElementById('previewImg');
+      if (!file) {
+        preview.style.display = 'none';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    updateUI();
+  </script>
 </body>
 </html>
