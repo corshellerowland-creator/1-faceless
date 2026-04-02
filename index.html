@@ -1,71 +1,126 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Faceless Trader — Aggressive Anime Luxury</title>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faceless Trader - Polished</title>
 <style>
-:root{--bg:#05030c;--panel:#161126cc;--text:#f7f1ff;--muted:#bbaed1;--pink:#ff4fd8;--violet:#8a2cff;--good:#25e39b;--bad:#ff6078;--warn:#ffcf5a}
-*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:radial-gradient(circle at 0 0,rgba(138,44,255,.22),transparent 28%),radial-gradient(circle at 100% 0,rgba(255,79,216,.18),transparent 30%),linear-gradient(180deg,#06040d,#0b0716 55%,#05030c);color:var(--text)}
-body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;opacity:.25}
-.app{max-width:480px;margin:0 auto;padding:18px 14px 40px}.hero,.section,.card,.tab,.item,.kpi{border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03)),linear-gradient(135deg,rgba(138,44,255,.14),rgba(255,79,216,.10));box-shadow:0 18px 48px rgba(0,0,0,.45),0 0 24px rgba(255,79,216,.12);border-radius:26px}
-.hero{padding:18px;overflow:hidden;position:relative;margin-bottom:14px}.hero:after{content:"";position:absolute;right:-40px;top:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,31,183,.32),transparent 60%);filter:blur(10px)}
-.hero-top{display:flex;gap:14px;align-items:flex-start}.avatar{width:108px;min-width:108px;height:124px;border-radius:26px;border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 18%,rgba(255,79,216,.30),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03))}
-.hero h1{margin:0;font-size:28px;text-shadow:0 0 20px rgba(255,79,216,.22)}.hero p{margin:8px 0 0;color:var(--muted);font-size:13px}
-.subchips,.chips,.btnrow{display:flex;flex-wrap:wrap;gap:8px}.subchip,.chip,.status{padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05)}
-.metrics,.grid2,.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metrics{margin-top:14px}.card,.section,.kpi{padding:14px}.label{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:800}.value{font-size:26px;font-weight:900;margin-top:8px}.small{font-size:12px;color:var(--muted);margin-top:6px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.tab{min-height:78px;padding:10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;color:var(--text);cursor:pointer}.tab.active{transform:translateY(-1px);border-color:rgba(255,79,216,.35)}.tab .icon{font-size:20px}.tab .txt{font-size:12px;font-weight:800}
-.view{display:none}.view.active{display:block}.section{margin-bottom:14px}.section h2{margin:0 0 12px;font-size:18px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}.field label{font-size:12px;color:var(--muted);font-weight:800}
-input,select,textarea{width:100%;padding:13px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(10,8,18,.85);color:var(--text);font-size:14px;outline:none}select option{color:#000}textarea{min-height:90px;resize:vertical}
-.btn{border:0;cursor:pointer;border-radius:16px;padding:12px 14px;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--violet),var(--pink));box-shadow:0 12px 24px rgba(138,44,255,.22)}.btn.secondary{background:rgba(255,255,255,.06);box-shadow:none;border:1px solid rgba(255,255,255,.10)}
-.preset{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}.preset button{padding:11px 8px;border-radius:16px;border:1px solid rgba(255,255,255,.10);color:#fff;background:rgba(255,255,255,.05);font-weight:800}
-.list{display:flex;flex-direction:column;gap:10px;margin-top:12px}.item{padding:12px}.item-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.item h3{margin:0 0 5px;font-size:15px}.item p{margin:0;font-size:12px;color:var(--muted)}.status.good{color:var(--good)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}
-.kpi .num{font-size:22px;font-weight:900;margin-top:8px}.timer{text-align:center}.clock{font-size:42px;font-weight:900;letter-spacing:1px;margin:8px 0 6px;text-shadow:0 0 18px rgba(255,79,216,.28)}
-.note-panel{border-left:3px solid var(--pink);padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);color:var(--muted);font-size:13px}.checkrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-@media (max-width:390px){.tabs{grid-template-columns:repeat(3,1fr)}.grid2,.metrics,.kpi-grid,.preset{grid-template-columns:1fr}.hero-top{flex-direction:column}.avatar{width:100%;height:160px}}
-</style></head><body>
-<div class="app">
-<div class="hero"><div class="hero-top"><div class="avatar"><svg width="96" height="112" viewBox="0 0 96 112" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="hood" x1="48" y1="0" x2="48" y2="112"><stop stop-color="#1C1333"/><stop offset="1" stop-color="#090713"/></linearGradient><radialGradient id="eyeGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(48 44) rotate(90) scale(18 28)"><stop stop-color="#FF4FD8" stop-opacity=".8"/><stop offset="1" stop-color="#FF4FD8" stop-opacity="0"/></radialGradient></defs><path d="M14 42C14 17 30 4 48 4C66 4 82 17 82 42V77C82 93 66 108 48 108C30 108 14 93 14 77V42Z" fill="url(#hood)" stroke="#A141FF" stroke-opacity=".55"/><path d="M5 44C8 18 28 2 48 2C68 2 88 18 91 44L78 37C72 22 61 15 48 15C35 15 24 22 18 37L5 44Z" fill="#130B25" stroke="#FF4FD8" stroke-opacity=".45"/><ellipse cx="48" cy="58" rx="23" ry="29" fill="#07050D"/><ellipse cx="48" cy="44" rx="26" ry="18" fill="url(#eyeGlow)"/><path d="M34 45C37 41 40 41 44 45" stroke="#FF4FD8" stroke-width="3" stroke-linecap="round"/><path d="M52 45C56 41 59 41 62 45" stroke="#FF4FD8" stroke-width="3" stroke-linecap="round"/><path d="M40 63C45 67 51 67 56 63" stroke="#7C3AED" stroke-width="2.4" stroke-linecap="round" opacity=".8"/></svg></div><div style="flex:1"><h1>Faceless Trader</h1><p>Aggressive anime luxury neon command center</p><div class="subchips"><div class="subchip">⚡ Aggressive Anime</div><div class="subchip">💜 Luxury Neon</div><div class="subchip">📱 Full System Layout</div></div></div></div><div class="metrics"><div class="card"><div class="label">Today's PnL</div><div class="value">$0</div><div class="small">No trades logged yet</div></div><div class="card"><div class="label">Session Status</div><div class="value" style="font-size:23px">Waiting</div><div class="small">Timer + lock logic next phase</div></div></div></div>
-<div class="tabs">
-<button class="tab active" data-view="dashboard"><span class="icon">⌂</span><span class="txt">Dashboard</span></button>
-<button class="tab" data-view="goals"><span class="icon">◎</span><span class="txt">Goals</span></button>
-<button class="tab" data-view="plan"><span class="icon">✦</span><span class="txt">Plan</span></button>
-<button class="tab" data-view="strategy"><span class="icon">⚔</span><span class="txt">Strategy</span></button>
-<button class="tab" data-view="eval"><span class="icon">◈</span><span class="txt">Eval</span></button>
-<button class="tab" data-view="funded"><span class="icon">⬢</span><span class="txt">Fund</span></button>
-<button class="tab" data-view="live"><span class="icon">◉</span><span class="txt">Live</span></button>
-<button class="tab" data-view="journal"><span class="icon">✎</span><span class="txt">Journal</span></button>
-<button class="tab" data-view="stats"><span class="icon">▣</span><span class="txt">Stats</span></button>
-<button class="tab" data-view="lock"><span class="icon">⛒</span><span class="txt">Lock</span></button>
-<button class="tab" data-view="pnl"><span class="icon">◌</span><span class="txt">PnL</span></button>
-<button class="tab" data-view="sizer"><span class="icon">⌗</span><span class="txt">Sizer</span></button>
-<button class="tab" data-view="timer"><span class="icon">◷</span><span class="txt">Timer</span></button>
+:root{
+  --bg:#05050c;
+  --panel:#0d0d1a;
+  --glow:#ff00cc;
+  --accent:#8a2cff;
+}
+body{
+  margin:0;
+  font-family:system-ui;
+  background:radial-gradient(circle at top, rgba(138,44,255,0.3), transparent), #05050c;
+  color:white;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px;
+}
+.title{
+  font-size:26px;
+  font-weight:bold;
+  background:linear-gradient(90deg,#ff00cc,#8a2cff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.style-btn{
+  padding:8px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.05);
+  cursor:pointer;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  padding:12px;
+}
+.card{
+  background:linear-gradient(145deg,#0d0d1a,#12122a);
+  border-radius:18px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 0 15px rgba(255,0,200,0.2);
+}
+.active{
+  border:1px solid #ff00cc;
+  box-shadow:0 0 25px rgba(255,0,200,0.5);
+}
+.section{
+  margin:12px;
+  padding:16px;
+  border-radius:20px;
+  background:linear-gradient(145deg,#0d0d1a,#151530);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 0 20px rgba(255,0,200,0.2);
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:none;
+  background:#0a0a15;
+  color:white;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(90deg,#ff00cc,#8a2cff);
+  color:white;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="title">Faceless Trader</div>
+<div class="style-btn" onclick="toggleTheme()">Style</div>
 </div>
 
-<section class="view active" id="dashboard"><div class="section"><h2>Command Center</h2><div class="kpi-grid"><div class="kpi"><div class="label">Active Goal</div><div class="num">$300</div><div class="small">Sample visual only</div></div><div class="kpi"><div class="label">Max Loss</div><div class="num">$150</div><div class="small">Pulled from Goals later</div></div><div class="kpi"><div class="label">Best Strategy</div><div class="num" style="font-size:18px">Supply & Demand</div><div class="small">Stats upgrade phase</div></div><div class="kpi"><div class="label">Theme</div><div class="num" style="font-size:18px">Aggressive</div><div class="small">Anime luxury neon</div></div></div></div><div class="section"><h2>Build Notes</h2><div class="note-panel">This version focuses on the look: aggressive anime identity, deeper glow, all sections restored, and stronger luxury neon styling. Next round can wire your journal syncing, stats math, interactive strategy scoring, and lock logic into this exact layout.</div></div></section>
-
-<section class="view" id="goals"><div class="section"><h2>Goals</h2><div class="field"><label>Account Type</label><select><option>Eval</option><option>Funded</option><option>Live</option></select></div><div class="preset"><button>Conservative<br><span style="font-size:11px;color:#c9bbdb">$150 / $75</span></button><button>Standard<br><span style="font-size:11px;color:#c9bbdb">$300 / $150</span></button><button>Aggressive<br><span style="font-size:11px;color:#c9bbdb">$500 / $250</span></button></div><div class="grid2"><div class="field"><label>Daily Goal</label><input placeholder="300"></div><div class="field"><label>Max Loss</label><input placeholder="150"></div></div><div class="btnrow"><button class="btn">Save Goal</button></div></div></section>
-
-<section class="view" id="plan"><div class="section"><h2>Plan</h2><div class="field"><label>Session Bias</label><textarea placeholder="What is the market doing? What is your bias? What level matters today?"></textarea></div><div class="grid2"><div class="field"><label>Primary Setup</label><select><option>Supply & Demand</option><option>ORB</option><option>EMA/TEMA</option><option>ICC</option></select></div><div class="field"><label>Session</label><select><option>Asia</option><option>London</option><option>New York</option></select></div></div><div class="btnrow"><button class="btn">Save Plan</button></div></div></section>
-
-<section class="view" id="strategy"><div class="section"><h2>Strategy</h2><div class="grid2"><div class="field"><label>Checklist Mode</label><select><option>Supply & Demand</option><option>EMA/TEMA</option><option>ORB</option><option>ICC</option></select></div><div class="field"><label>Decision</label><select><option>Valid</option><option>Failed</option><option>No Trade</option></select></div></div><div class="checkrow"><input type="checkbox"><div>Fresh zone or clean setup identified</div></div><div class="checkrow"><input type="checkbox"><div>Higher time frame alignment confirmed</div></div><div class="checkrow"><input type="checkbox"><div>Momentum / displacement is clean</div></div><div class="checkrow"><input type="checkbox"><div>Entry confirmation is present</div></div><div class="checkrow"><input type="checkbox"><div>Risk and target are defined before entry</div></div><div class="btnrow"><button class="btn">Score Strategy</button><button class="btn secondary">Manual Reset</button></div></div></section>
-
-<section class="view" id="eval"><div class="section"><h2>Eval Tracker</h2><div class="grid2"><div class="field"><label>Firm</label><select><option>Topstep</option><option>Tradeify</option><option>Lucid</option><option>Apex</option></select></div><div class="field"><label>Account Size</label><select><option>25K</option><option>50K</option></select></div></div><div class="grid2"><div class="field"><label>Profit Goal</label><input value="3000"></div><div class="field"><label>Drawdown</label><input value="2000"></div></div><div class="grid2"><div class="field"><label>Balance</label><input placeholder="50000"></div><div class="field"><label>Status</label><select><option>Active</option><option>Passed</option><option>Failed</option><option>Archived</option></select></div></div><div class="field"><label>Notes</label><textarea placeholder="Eval notes"></textarea></div><div class="btnrow"><button class="btn">Save Eval</button><button class="btn secondary">Update Existing</button></div></div></section>
-
-<section class="view" id="funded"><div class="section"><h2>Funded Tracker</h2><div class="grid2"><div class="field"><label>Firm</label><select><option>Topstep</option><option>Tradeify</option><option>Lucid</option><option>Apex</option></select></div><div class="field"><label>Account Size</label><select><option>25K</option><option>50K</option></select></div></div><div class="grid2"><div class="field"><label>Payout Goal</label><input value="3000"></div><div class="field"><label>Drawdown</label><input value="2000"></div></div><div class="grid2"><div class="field"><label>Balance</label><input placeholder="50000"></div><div class="field"><label>Status</label><select><option>Active</option><option>Drawdown Risk</option><option>Blown</option><option>Archived</option></select></div></div><div class="field"><label>Notes</label><textarea placeholder="Funded notes"></textarea></div><div class="btnrow"><button class="btn">Save Funded</button><button class="btn secondary">Update Existing</button></div></div></section>
-
-<section class="view" id="live"><div class="section"><h2>Live Account</h2><div class="grid2"><div class="field"><label>Broker / Platform</label><input placeholder="Robinhood / Webull / Tradovate"></div><div class="field"><label>Balance</label><input placeholder="1000"></div></div><div class="field"><label>Notes</label><textarea placeholder="Live rules"></textarea></div><div class="btnrow"><button class="btn">Save Live</button></div></div></section>
-
-<section class="view" id="journal"><div class="section"><h2>Journal</h2><div class="grid2"><div class="field"><label>Date</label><input type="date"></div><div class="field"><label>Account Type</label><select><option>Eval</option><option>Funded</option><option>Live</option></select></div></div><div class="grid2"><div class="field"><label>PnL</label><input placeholder="+300 or -150"></div><div class="field"><label>Strategy</label><select><option>Supply & Demand</option><option>ORB</option><option>EMA/TEMA</option><option>ICC</option></select></div></div><div class="grid2"><div class="field"><label>Result</label><select><option>Valid</option><option>Failed</option><option>No Trade</option><option>No Trade Day</option></select></div><div class="field"><label>Session</label><select><option>Asia</option><option>London</option><option>New York</option></select></div></div><div class="field"><label>Notes</label><textarea placeholder="Execution notes"></textarea></div><div class="btnrow"><button class="btn">Save Entry</button><button class="btn secondary">Edit Existing</button></div></div></section>
-
-<section class="view" id="stats"><div class="section"><h2>Stats</h2><div class="kpi-grid"><div class="kpi"><div class="label">Win Rate</div><div class="num">68%</div></div><div class="kpi"><div class="label">Best Strategy</div><div class="num" style="font-size:18px">Supply & Demand</div></div><div class="kpi"><div class="label">Goal Hit Days</div><div class="num">5</div></div><div class="kpi"><div class="label">Loss Hit Days</div><div class="num">1</div></div></div></div></section>
-
-<section class="view" id="lock"><div class="section"><h2>Lock</h2><div class="note-panel">This section is back in the layout. Next phase can wire it to max loss, goal hit, and session-end discipline rules.</div><div class="btnrow" style="margin-top:12px"><button class="btn">Lock Trading</button><button class="btn secondary">Unlock</button></div></div></section>
-
-<section class="view" id="pnl"><div class="section"><h2>PnL</h2><div class="kpi-grid"><div class="kpi"><div class="label">Daily</div><div class="num">$300</div></div><div class="kpi"><div class="label">Weekly</div><div class="num">$875</div></div><div class="kpi"><div class="label">Monthly</div><div class="num">$2,150</div></div><div class="kpi"><div class="label">Goal Progress</div><div class="num">60%</div></div></div></div></section>
-
-<section class="view" id="sizer"><div class="section"><h2>Sizer</h2><div class="grid2"><div class="field"><label>Risk ($)</label><input placeholder="100"></div><div class="field"><label>Stop (points)</label><input placeholder="10"></div></div><div class="grid2"><div class="field"><label>Instrument</label><select><option>MNQ</option><option>MES</option><option>MGC</option><option>MYM</option></select></div><div class="field"><label>Size</label><input placeholder="Auto-calc later"></div></div><div class="btnrow"><button class="btn">Calculate Size</button></div></div></section>
-
-<section class="view" id="timer"><div class="section timer"><h2>Timer</h2><div class="clock" id="clock">02:00:00</div><div class="small">Aggressive session control UI. Start, pause, resume, and end early next phase.</div><div class="btnrow" style="justify-content:center;margin-top:12px"><button class="btn" onclick="setClock('01:59:59')">Start</button><button class="btn secondary" onclick="setClock('01:20:12')">Pause</button><button class="btn secondary" onclick="setClock('00:55:44')">Resume</button><button class="btn secondary" onclick="setClock('00:00:00')">End Early</button></div></div></section>
-
+<div class="grid">
+<div class="card">Home</div>
+<div class="card">Plan</div>
+<div class="card">Strategy</div>
+<div class="card">Live</div>
+<div class="card">Lock</div>
+<div class="card active">PnL</div>
+<div class="card">Eval</div>
+<div class="card">Fund</div>
+<div class="card">Journal</div>
+<div class="card">Stats</div>
+<div class="card">Sizer</div>
 </div>
+
+<div class="section">
+<h3>Today's PnL</h3>
+<input placeholder="0">
+<h3>Trades Taken</h3>
+<input placeholder="0">
+<button>Save Day</button>
+</div>
+
 <script>
-document.querySelectorAll('.tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));tab.classList.add('active');document.getElementById(tab.dataset.view).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});});});
-function setClock(v){document.getElementById('clock').textContent=v;}
-</script></body></html>
+let mode=0;
+function toggleTheme(){
+  mode++;
+  if(mode%2==0){
+    document.body.style.background="#05050c";
+  } else {
+    document.body.style.background="#021b1b";
+  }
+}
+</script>
+
+</body>
+</html>
