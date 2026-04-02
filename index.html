@@ -2,82 +2,83 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faceless Trader - Polished</title>
+<title>Faceless Trader Hybrid</title>
 <style>
 :root{
+  --accent:#ff00cc;
+  --accent2:#8a2cff;
   --bg:#05050c;
-  --panel:#0d0d1a;
-  --glow:#ff00cc;
-  --accent:#8a2cff;
 }
 body{
   margin:0;
   font-family:system-ui;
-  background:radial-gradient(circle at top, rgba(138,44,255,0.3), transparent), #05050c;
+  background:var(--bg);
   color:white;
 }
 .header{
   display:flex;
   justify-content:space-between;
+  padding:15px;
   align-items:center;
-  padding:20px;
 }
 .title{
-  font-size:26px;
+  font-size:22px;
   font-weight:bold;
-  background:linear-gradient(90deg,#ff00cc,#8a2cff);
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;
   color:transparent;
 }
 .style-btn{
-  padding:8px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.2);
-  background:rgba(255,255,255,0.05);
+  padding:6px 10px;
+  border:1px solid #555;
+  border-radius:10px;
   cursor:pointer;
 }
 .grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  padding:12px;
+  gap:10px;
+  padding:10px;
 }
 .card{
-  background:linear-gradient(145deg,#0d0d1a,#12122a);
-  border-radius:18px;
-  padding:14px;
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 0 15px rgba(255,0,200,0.2);
+  padding:12px;
+  border-radius:14px;
+  background:#111;
+  text-align:center;
+  cursor:pointer;
 }
-.active{
-  border:1px solid #ff00cc;
-  box-shadow:0 0 25px rgba(255,0,200,0.5);
+.card.active{
+  box-shadow:0 0 15px var(--accent);
 }
 .section{
-  margin:12px;
-  padding:16px;
-  border-radius:20px;
-  background:linear-gradient(145deg,#0d0d1a,#151530);
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 0 20px rgba(255,0,200,0.2);
+  display:none;
+  padding:15px;
+}
+.section.active{
+  display:block;
 }
 input{
   width:100%;
-  padding:12px;
-  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
   border:none;
-  background:#0a0a15;
+  background:#111;
   color:white;
 }
 button{
   width:100%;
-  padding:12px;
+  padding:10px;
   margin-top:10px;
-  border-radius:14px;
+  border-radius:10px;
   border:none;
-  background:linear-gradient(90deg,#ff00cc,#8a2cff);
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
   color:white;
-  font-weight:bold;
+}
+img.preview{
+  width:100%;
+  margin-top:10px;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -89,36 +90,61 @@ button{
 </div>
 
 <div class="grid">
-<div class="card">Home</div>
-<div class="card">Plan</div>
-<div class="card">Strategy</div>
-<div class="card">Live</div>
-<div class="card">Lock</div>
-<div class="card active">PnL</div>
-<div class="card">Eval</div>
-<div class="card">Fund</div>
-<div class="card">Journal</div>
-<div class="card">Stats</div>
-<div class="card">Sizer</div>
+<div class="card active" onclick="showSection(event,'home')">Home</div>
+<div class="card" onclick="showSection(event,'strategy')">Strategy</div>
+<div class="card" onclick="showSection(event,'pnl')">PnL</div>
+<div class="card" onclick="showSection(event,'journal')">Journal</div>
 </div>
 
-<div class="section">
-<h3>Today's PnL</h3>
-<input placeholder="0">
-<h3>Trades Taken</h3>
-<input placeholder="0">
-<button>Save Day</button>
+<div id="home" class="section active">
+<h2>Home</h2>
+<p>Main character (clean)</p>
+</div>
+
+<div id="strategy" class="section">
+<h2>Strategy</h2>
+<p>Thinking mode character here</p>
+</div>
+
+<div id="pnl" class="section">
+<h2>PnL</h2>
+<p>Execution character here</p>
+</div>
+
+<div id="journal" class="section">
+<h2>Journal</h2>
+<input placeholder="PnL">
+<input type="file" accept="image/*" onchange="previewImage(event)">
+<img id="imgPreview" class="preview"/>
+<button>Save Entry</button>
 </div>
 
 <script>
+function showSection(e,id){
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+ e.target.classList.add('active');
+}
+
 let mode=0;
 function toggleTheme(){
-  mode++;
-  if(mode%2==0){
-    document.body.style.background="#05050c";
-  } else {
-    document.body.style.background="#021b1b";
-  }
+ mode++;
+ if(mode%2==0){
+  document.documentElement.style.setProperty('--accent','#ff00cc');
+  document.documentElement.style.setProperty('--accent2','#8a2cff');
+ } else {
+  document.documentElement.style.setProperty('--accent','#00ffcc');
+  document.documentElement.style.setProperty('--accent2','#00cc88');
+ }
+}
+
+function previewImage(e){
+ const reader = new FileReader();
+ reader.onload = function(){
+  document.getElementById('imgPreview').src = reader.result;
+ }
+ reader.readAsDataURL(e.target.files[0]);
 }
 </script>
 
