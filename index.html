@@ -1,126 +1,656 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faceless Trader - ICC</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Faceless Trader — ICC Final Build</title>
 <style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:#0b0b12;
-  color:white;
-}
-.container {
-  padding:16px;
-}
-.card {
-  background:linear-gradient(145deg,#141421,#1b1b2a);
-  border-radius:20px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 0 10px rgba(255,0,150,.2);
-}
-.row {
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-.btn {
-  flex:1;
-  text-align:center;
-  padding:10px;
-  border-radius:20px;
-  background:#1e1e2f;
-}
-.active {
-  background:linear-gradient(90deg,pink,purple);
-}
-.small {
-  font-size:12px;
-  opacity:.7;
-  margin-top:4px;
-}
-.title {
-  font-weight:bold;
-}
-.score {
-  font-size:24px;
-  font-weight:bold;
-}
-.progress {
-  height:6px;
-  background:#222;
-  border-radius:10px;
-  overflow:hidden;
-}
-.progress-bar {
-  width:65%;
-  height:100%;
-  background:linear-gradient(90deg,pink,purple);
-}
+  :root{
+    --bg:#090711;
+    --bg2:#120d22;
+    --card:#17122a;
+    --card2:#22173b;
+    --text:#f7efff;
+    --muted:#c7b9da;
+    --pink:#ff3bbd;
+    --purple:#8b5cf6;
+    --blue:#39b8ff;
+    --green:#44e1a7;
+    --yellow:#ffce52;
+    --red:#ff5e7e;
+    --line:rgba(255,255,255,.09);
+    --shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04) inset;
+    --glow:0 0 0 1px rgba(255,255,255,.05), 0 0 28px rgba(255,59,189,.12);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:
+      radial-gradient(circle at top left, rgba(139,92,246,.18), transparent 28%),
+      radial-gradient(circle at top right, rgba(57,184,255,.12), transparent 25%),
+      linear-gradient(180deg, var(--bg), #0d0a18 50%, var(--bg2));
+      color:var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  body{padding:18px}
+  .app{max-width:420px; margin:0 auto}
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow), var(--glow);
+    backdrop-filter: blur(12px);
+  }
+  .hero{padding:18px 18px 16px}
+  .heroTop{display:flex; justify-content:space-between; align-items:flex-start; gap:16px}
+  h1{font-size:28px; margin:0 0 4px; letter-spacing:.3px}
+  .sub{color:var(--muted); font-size:13px; line-height:1.35}
+  .badge{
+    padding:8px 12px; border-radius:999px; font-size:12px; font-weight:700;
+    background:linear-gradient(135deg, rgba(255,59,189,.22), rgba(139,92,246,.22));
+    border:1px solid rgba(255,255,255,.08);
+    white-space:nowrap;
+  }
+  .tabs, .sessions{display:flex; gap:10px; margin-top:14px}
+  .pill{
+    flex:1; border:none; color:var(--text); background:#1a1430; padding:12px 14px;
+    border-radius:999px; font-weight:700; font-size:14px; cursor:pointer;
+    border:1px solid rgba(255,255,255,.06);
+    transition:.18s transform ease, .18s background ease, .18s box-shadow ease;
+  }
+  .pill.active{
+    background:linear-gradient(135deg, rgba(255,59,189,.92), rgba(139,92,246,.92));
+    box-shadow:0 10px 24px rgba(255,59,189,.22);
+  }
+  .pill.secondary.active{
+    background:linear-gradient(135deg, rgba(57,184,255,.92), rgba(139,92,246,.92));
+    box-shadow:0 10px 24px rgba(57,184,255,.18);
+  }
+  .stats{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+  .stat{
+    padding:16px; border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+    border:1px solid var(--line);
+  }
+  .stat .label{color:var(--muted); font-size:12px}
+  .stat .big{font-size:32px; font-weight:800; margin-top:4px; letter-spacing:.2px}
+  .stat .smallBadge{
+    display:inline-block; margin-top:8px; padding:5px 10px; border-radius:999px; font-size:11px; font-weight:800;
+    background:rgba(255,255,255,.06);
+  }
+  .progressWrap{margin-top:14px}
+  .progressMeta{display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-bottom:8px}
+  .track{height:12px; background:#150f28; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.05)}
+  .fill{height:100%; width:0%; background:linear-gradient(90deg, var(--pink), var(--purple), var(--blue)); border-radius:999px; transition:width .25s ease}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+  .phaseCard{
+    padding:14px; min-height:118px; cursor:pointer; position:relative;
+    overflow:hidden;
+  }
+  .phaseCard:before{
+    content:""; position:absolute; inset:auto -30px -30px auto; width:90px; height:90px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.1), transparent 65%);
+    pointer-events:none;
+  }
+  .phaseTitle{font-size:16px; font-weight:800; margin-bottom:6px}
+  .phaseDesc{font-size:12px; line-height:1.35; color:var(--muted)}
+  .phaseMeta{margin-top:10px; display:flex; justify-content:space-between; align-items:center}
+  .miniCount{font-size:11px; color:var(--muted)}
+  .openBtn{font-size:12px; font-weight:800; color:#fff; opacity:.9}
+  .section{margin-top:14px; padding:16px}
+  .sectionTitle{font-weight:800; font-size:16px; margin:0 0 10px}
+  .journalGrid{display:grid; gap:10px}
+  .field{
+    background:#130f22; border:1px solid rgba(255,255,255,.07); color:var(--text);
+    border-radius:16px; padding:12px 14px; width:100%; outline:none;
+  }
+  textarea.field{min-height:88px; resize:vertical}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .cta{
+    margin-top:14px; width:100%; border:none; border-radius:18px; padding:15px 16px;
+    font-size:15px; font-weight:900; color:white; cursor:pointer;
+    background:linear-gradient(135deg, var(--pink), var(--purple));
+    box-shadow:0 12px 24px rgba(255,59,189,.22);
+  }
+  .secondaryBtn{
+    width:100%; border:none; border-radius:18px; padding:14px 16px; font-size:14px; font-weight:800;
+    color:white; cursor:pointer; background:linear-gradient(135deg, rgba(57,184,255,.84), rgba(139,92,246,.84));
+    box-shadow:0 12px 24px rgba(57,184,255,.18);
+  }
+  .footerNote{color:var(--muted); font-size:11px; text-align:center; padding:14px 0 4px}
+  .sheet{
+    position:fixed; inset:0; background:rgba(5,4,10,.62); backdrop-filter: blur(10px);
+    display:none; align-items:flex-end; justify-content:center; z-index:50; padding:12px;
+  }
+  .sheet.show{display:flex}
+  .sheetCard{
+    width:min(100%,420px); max-height:90vh; overflow:auto;
+    background:linear-gradient(180deg, rgba(20,14,34,.98), rgba(15,11,26,.98));
+    border:1px solid rgba(255,255,255,.08); border-radius:28px; box-shadow:var(--shadow), 0 0 34px rgba(255,59,189,.16);
+    padding:18px;
+  }
+  .sheetHead{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px}
+  .sheetTitle{font-size:24px; font-weight:900; margin:0}
+  .sheetSub{font-size:12px; color:var(--muted); margin-top:4px}
+  .x{
+    width:38px; height:38px; border-radius:50%; border:none; cursor:pointer; color:#fff;
+    background:#22173a; font-size:18px; font-weight:900;
+  }
+  .checklist{display:grid; gap:10px; margin-top:12px}
+  .item{
+    padding:14px; border-radius:18px; background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
+    border:1px solid rgba(255,255,255,.07); cursor:pointer;
+    display:grid; grid-template-columns:24px 1fr; gap:12px; align-items:flex-start;
+  }
+  .box{
+    width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,.22); margin-top:2px;
+    display:grid; place-items:center; font-size:14px; font-weight:900;
+  }
+  .item.checked .box{
+    background:linear-gradient(135deg, var(--green), var(--blue));
+    border-color:transparent; color:#061312;
+  }
+  .item.fail{
+    border-color:rgba(255,94,126,.55); box-shadow:0 0 0 1px rgba(255,94,126,.15) inset;
+  }
+  .item.fail .box{
+    background:linear-gradient(135deg, var(--red), #ff8697); border-color:transparent; color:white;
+  }
+  .itemTitle{font-size:15px; font-weight:800}
+  .itemDesc{font-size:12px; color:var(--muted); line-height:1.4; margin-top:4px}
+  .rule{
+    margin-top:12px; padding:13px 14px; border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,206,82,.12), rgba(255,206,82,.05));
+    border:1px solid rgba(255,206,82,.22);
+    font-size:12px; color:#ffebaf;
+  }
+  .danger{
+    margin-top:12px; padding:13px 14px; border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,94,126,.12), rgba(255,94,126,.05));
+    border:1px solid rgba(255,94,126,.22);
+    font-size:12px; color:#ffc0cb;
+  }
+  .sheetActions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+  .miniBtn{
+    border:none; border-radius:16px; padding:13px 14px; font-weight:800; color:white; cursor:pointer;
+    background:#211736;
+  }
+  .miniBtn.primary{
+    background:linear-gradient(135deg, var(--pink), var(--purple));
+  }
+  .feedback{
+    margin-top:14px; padding:16px; display:none;
+  }
+  .feedback.show{display:block}
+  .feedback h3{margin:0 0 10px; font-size:19px}
+  .feedback .tag{
+    display:inline-block; padding:6px 10px; border-radius:999px; font-size:11px; font-weight:900;
+    background:rgba(255,255,255,.06); margin-right:6px; margin-bottom:6px;
+  }
+  .list{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.5}
+  .tiny{font-size:11px; color:var(--muted)}
 </style>
 </head>
-
 <body>
-<div class="container">
+<div class="app">
+  <div class="panel hero">
+    <div class="heroTop">
+      <div>
+        <h1>ICC Strategy</h1>
+        <div class="sub">Indication • Correction • Continuation</div>
+      </div>
+      <div class="badge" id="statusBadge">WAIT</div>
+    </div>
 
-<h2>ICC Strategy</h2>
+    <div class="tabs">
+      <button class="pill active" data-mode="1M">1M ⚡</button>
+      <button class="pill" data-mode="5M">5M 🧘🏽‍♀️</button>
+    </div>
 
-<div class="row">
-  <div class="btn active">1M ⚡</div>
-  <div class="btn">5M 🧘🏽‍♀️</div>
-</div>
+    <div class="sessions">
+      <button class="pill secondary" data-session="Asia">Asia</button>
+      <button class="pill secondary" data-session="London">London</button>
+      <button class="pill secondary active" data-session="NY">NY</button>
+    </div>
 
-<div class="row" style="margin-top:10px;">
-  <div class="btn">Asia</div>
-  <div class="btn active">NY</div>
-</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Setup Strength</div>
+        <div class="big" id="scoreValue">0%</div>
+        <div class="smallBadge" id="scoreHint">Build the setup</div>
+      </div>
+      <div class="stat">
+        <div class="label">Setup Grade</div>
+        <div class="big" id="gradeValue">-</div>
+        <div class="smallBadge" id="disciplineText">No trade yet</div>
+      </div>
+    </div>
 
-<div class="row" style="margin-top:15px;">
-  <div class="card" style="flex:1;">
-    <div class="score">82%</div>
-    <div class="small">Setup Strength</div>
+    <div class="progressWrap">
+      <div class="progressMeta">
+        <span>Progress</span>
+        <span id="progressLabel">0 / 16 complete</span>
+      </div>
+      <div class="track"><div class="fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="grid">
+      <div class="panel phaseCard" data-phase="bias">
+        <div class="phaseTitle">Bias + Setup</div>
+        <div class="phaseDesc">Use the 1H / 4H to define direction before looking for execution.</div>
+        <div class="phaseMeta">
+          <div class="miniCount" id="count-bias">0 / 4</div>
+          <div class="openBtn">Open →</div>
+        </div>
+      </div>
+
+      <div class="panel phaseCard" data-phase="indication">
+        <div class="phaseTitle">Indication</div>
+        <div class="phaseDesc">Wait for a candle close through the level. No wick-only confirmation.</div>
+        <div class="phaseMeta">
+          <div class="miniCount" id="count-indication">0 / 4</div>
+          <div class="openBtn">Open →</div>
+        </div>
+      </div>
+
+      <div class="panel phaseCard" data-phase="correction">
+        <div class="phaseTitle">Correction</div>
+        <div class="phaseDesc">Let the pullback form structure. Do not rush the retrace.</div>
+        <div class="phaseMeta">
+          <div class="miniCount" id="count-correction">0 / 4</div>
+          <div class="openBtn">Open →</div>
+        </div>
+      </div>
+
+      <div class="panel phaseCard" data-phase="entry">
+        <div class="phaseTitle">Continuation Entry</div>
+        <div class="phaseDesc">Enter only after confirmation. Respect limits, SL, and targets.</div>
+        <div class="phaseMeta">
+          <div class="miniCount" id="count-entry">0 / 4</div>
+          <div class="openBtn">Open →</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="card" style="flex:1;">
-    <div class="score">B</div>
-    <div class="small">Setup Grade</div>
+
+  <div class="panel section" style="margin-top:14px;">
+    <h2 class="sectionTitle">Journal It</h2>
+    <div class="journalGrid">
+      <div class="row2">
+        <input class="field" id="strategyField" value="ICC" readonly />
+        <input class="field" id="modeField" value="1M" readonly />
+      </div>
+      <div class="row2">
+        <input class="field" id="sessionField" value="NY" readonly />
+        <input class="field" id="scoreField" value="0%" readonly />
+      </div>
+      <div class="row2">
+        <input class="field" id="entryField" placeholder="Entry" />
+        <input class="field" id="slField" placeholder="Stop Loss" />
+      </div>
+      <div class="row2">
+        <input class="field" id="tpField" placeholder="TP1 / TP2" />
+        <select class="field" id="resultField">
+          <option value="">Result</option>
+          <option>Win</option>
+          <option>Loss</option>
+          <option>Breakeven</option>
+        </select>
+      </div>
+      <textarea class="field" id="lessonField" placeholder="Mistake / lesson / note"></textarea>
+      <input class="field" type="file" id="screenshotField" />
+    </div>
+    <button class="cta" id="saveTradeBtn">Save Trade + Feedback</button>
+    <div class="tiny" style="margin-top:10px;">Feedback after each trade is built in. It reacts to your checklist quality, result, and any rule violations.</div>
+  </div>
+
+  <div class="panel feedback" id="feedbackCard">
+    <h3 id="feedbackTitle">Post-Trade Feedback</h3>
+    <div>
+      <span class="tag" id="feedbackQuality">Trade Quality: -</span>
+      <span class="tag" id="feedbackDiscipline">Discipline: -</span>
+      <span class="tag" id="feedbackResult">Result: -</span>
+    </div>
+    <div style="margin-top:12px; font-weight:800;">What went well</div>
+    <ul class="list" id="wentWell"></ul>
+    <div style="margin-top:12px; font-weight:800;">What to improve</div>
+    <ul class="list" id="improveList"></ul>
+    <div style="margin-top:12px; font-weight:800;">Next trade focus</div>
+    <div class="sub" id="nextFocus" style="margin-top:6px;"></div>
+  </div>
+
+  <div class="footerNote">Final ICC build preview • full checklist screens • feedback after each trade</div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="sheetCard">
+    <div class="sheetHead">
+      <div>
+        <div class="sheetTitle" id="sheetTitle">Phase</div>
+        <div class="sheetSub" id="sheetSub">Checklist</div>
+      </div>
+      <button class="x" id="closeSheet">×</button>
+    </div>
+    <div class="checklist" id="checklist"></div>
+    <div class="rule" id="ruleBox"></div>
+    <div class="danger" id="dangerBox"></div>
+    <div class="sheetActions">
+      <button class="miniBtn" id="resetPhaseBtn">Reset Phase</button>
+      <button class="miniBtn primary" id="donePhaseBtn">Done</button>
+    </div>
   </div>
 </div>
 
-<div class="progress" style="margin:10px 0;">
-  <div class="progress-bar"></div>
-</div>
+<script>
+const data = {
+  bias: {
+    title: "Bias + Setup",
+    sub: "Phase 1 • Mark the higher time frame before execution",
+    rule: "Use the 1H and 4H to build bias first. These levels are what you are actively watching for reaction.",
+    danger: "No HTF bias = automatic No Trade.",
+    items: [
+      { key:"htf_bias", title:"HTF Bias Clear", desc:"Use the 1H and 4H to determine overall direction before looking for an entry." },
+      { key:"swing_levels", title:"Swing High / Low", desc:"These can be marked on both the 1H and 4H. These are the levels you are actively watching for reaction." },
+      { key:"pre_indication", title:"Pre-Indication Level", desc:"This is the key level price has not fully broken yet. You are waiting for a clean close beyond it." },
+      { key:"target_identified", title:"Target Identified", desc:"Know where price is likely moving before entering the trade." }
+    ]
+  },
+  indication: {
+    title: "Indication",
+    sub: "Phase 2 • Wait for the true break",
+    rule: "Indication confirms direction only. Entry does not happen here.",
+    danger: "Wick only or early entry = No Trade.",
+    items: [
+      { key:"close_past_level", title:"Candle Close Past Level", desc:"This must be a true candle close, not just a wick through the level." },
+      { key:"bullish_or_bearish", title:"Directional Confirmation", desc:"The close should clearly support the direction of the trade above swing high or below swing low." },
+      { key:"no_entry_yet", title:"No Entry Yet", desc:"Indication confirms direction only. Do not enter at this stage." },
+      { key:"no_wick_only", title:"No Wick-Only Confirmation", desc:"A wick without a close does not count as confirmation." }
+    ]
+  },
+  correction: {
+    title: "Correction",
+    sub: "Phase 3 • Let the pullback finish",
+    rule: "The correction is not complete at the pullback. It completes at the retest + close.",
+    danger: "Wrong-side structure break = No Trade.",
+    items: [
+      { key:"clean_pullback", title:"Clean Pullback", desc:"Price should pull back in a controlled way, not randomly spike around." },
+      { key:"observe_retrace", title:"Observe Retrace", desc:"Let the retrace develop naturally. Watch, do not rush." },
+      { key:"internal_shift", title:"Structure Shift Forms", desc:"Watch for internal structure to form during the pullback." },
+      { key:"retest_close", title:"Retest + Close", desc:"The correction is complete only when the retest and close confirm it." }
+    ]
+  },
+  entry: {
+    title: "Continuation Entry",
+    sub: "Phase 4 • Confirmation first, then execution",
+    rule: "Enter only after continuation is confirmed. No chasing.",
+    danger: "No close, no SL, or chasing = No Trade.",
+    items: [
+      { key:"continuation_close", title:"Continuation Close", desc:"Enter only after continuation is confirmed back through the level." },
+      { key:"limit_entry", title:"Limit Entry", desc:"Respect the setup. No chasing the move if the level is missed." },
+      { key:"stop_loss", title:"Stop Loss Set", desc:"Your risk should already be defined before entry." },
+      { key:"targets_marked", title:"TP1 / TP2 Marked", desc:"Know where partials and full targets are before taking the trade." }
+    ]
+  }
+};
 
-<div class="card">
-  <div class="title">Bias + Setup</div>
-  <div class="small">Use 1H/4H to define direction before trading</div>
-</div>
+const state = {
+  mode: "1M",
+  session: "NY",
+  activePhase: null,
+  checked: {},
+  violations: new Set()
+};
 
-<div class="card">
-  <div class="title">Swing High / Low</div>
-  <div class="small">These can be marked on both the 1H and 4H. These are the levels you are actively watching for reaction.</div>
-</div>
+Object.values(data).forEach(phase => phase.items.forEach(item => state.checked[item.key] = false));
 
-<div class="card">
-  <div class="title">Indication</div>
-  <div class="small">Wait for candle close, not wick. No entry here.</div>
-</div>
+const phaseOrder = ["bias","indication","correction","entry"];
 
-<div class="card">
-  <div class="title">Correction</div>
-  <div class="small">Pullback must form structure. Completion = retest + close.</div>
-</div>
+function openPhase(phaseKey){
+  state.activePhase = phaseKey;
+  const phase = data[phaseKey];
+  document.getElementById("sheetTitle").textContent = phase.title;
+  document.getElementById("sheetSub").textContent = phase.sub.replace("1M", state.mode).replace("5M", state.mode);
+  document.getElementById("ruleBox").textContent = phase.rule.replace("1H and 4H", "1H and 4H").replace("entry", "entry");
+  document.getElementById("dangerBox").textContent = phase.danger;
+  const list = document.getElementById("checklist");
+  list.innerHTML = "";
+  phase.items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item" + (state.checked[item.key] ? " checked" : "");
+    div.innerHTML = `
+      <div class="box">${state.checked[item.key] ? "✓" : ""}</div>
+      <div>
+        <div class="itemTitle">${item.title}</div>
+        <div class="itemDesc">${item.desc.replaceAll("1M", state.mode).replaceAll("5M", state.mode)}</div>
+      </div>
+    `;
+    div.onclick = () => {
+      state.checked[item.key] = !state.checked[item.key];
+      updateUI();
+      openPhase(phaseKey);
+    };
+    list.appendChild(div);
+  });
+  document.getElementById("sheet").classList.add("show");
+}
 
-<div class="card">
-  <div class="title">Entry</div>
-  <div class="small">Enter on confirmation only. No chasing.</div>
-</div>
+function closePhase(){
+  document.getElementById("sheet").classList.remove("show");
+}
 
-<div class="card" style="text-align:center; background:linear-gradient(90deg,pink,purple);">
-  ⭐ Take Trade
-</div>
+function getCounts(){
+  const counts = {};
+  phaseOrder.forEach(phaseKey => {
+    const phase = data[phaseKey];
+    const total = phase.items.length;
+    const done = phase.items.filter(item => state.checked[item.key]).length;
+    counts[phaseKey] = {done, total};
+  });
+  return counts;
+}
 
-</div>
+function computeScore(){
+  const total = Object.values(state.checked).length;
+  const done = Object.values(state.checked).filter(Boolean).length;
+  let score = Math.round((done / total) * 100);
+
+  // rule-based reductions
+  if (!state.checked.htf_bias) score = Math.max(0, score - 20);
+  if (!state.checked.no_wick_only) score = Math.max(0, score - 10);
+  if (!state.checked.stop_loss) score = Math.max(0, score - 10);
+
+  return score;
+}
+
+function computeStatus(score){
+  const hardFail = !state.checked.htf_bias || !state.checked.no_wick_only || !state.checked.stop_loss;
+  if (hardFail && score < 75) return {badge:"NO TRADE", grade:"F", hint:"Rule violation", discipline:"Fix invalidations first"};
+  if (score >= 90) return {badge:"A SETUP", grade:"A", hint:"Clean setup", discipline:"Ready to execute"};
+  if (score >= 75) return {badge:"B SETUP", grade:"B", hint:"Tradable", discipline:"Good, not perfect"};
+  if (score >= 50) return {badge:"WAIT", grade:"C", hint:"Needs work", discipline:"More confirmations needed"};
+  return {badge:"WAIT", grade:"-", hint:"Build the setup", discipline:"Not ready yet"};
+}
+
+function updateUI(){
+  const counts = getCounts();
+  phaseOrder.forEach(key => {
+    document.getElementById("count-" + key).textContent = counts[key].done + " / " + counts[key].total;
+  });
+
+  const totalDone = Object.values(counts).reduce((a,b) => a + b.done, 0);
+  const totalItems = Object.values(counts).reduce((a,b) => a + b.total, 0);
+  const score = computeScore();
+  const status = computeStatus(score);
+
+  document.getElementById("scoreValue").textContent = score + "%";
+  document.getElementById("gradeValue").textContent = status.grade;
+  document.getElementById("scoreHint").textContent = status.hint;
+  document.getElementById("disciplineText").textContent = status.discipline;
+  document.getElementById("progressLabel").textContent = totalDone + " / " + totalItems + " complete";
+  document.getElementById("progressFill").style.width = Math.round((totalDone / totalItems) * 100) + "%";
+  document.getElementById("statusBadge").textContent = status.badge;
+
+  document.getElementById("modeField").value = state.mode;
+  document.getElementById("sessionField").value = state.session;
+  document.getElementById("scoreField").value = score + "%";
+}
+
+document.querySelectorAll("[data-phase]").forEach(el => el.onclick = () => openPhase(el.dataset.phase));
+document.getElementById("closeSheet").onclick = closePhase;
+document.getElementById("donePhaseBtn").onclick = closePhase;
+document.getElementById("sheet").addEventListener("click", e => {
+  if (e.target.id === "sheet") closePhase();
+});
+
+document.getElementById("resetPhaseBtn").onclick = () => {
+  const phase = data[state.activePhase];
+  phase.items.forEach(item => state.checked[item.key] = false);
+  updateUI();
+  openPhase(state.activePhase);
+};
+
+document.querySelectorAll("[data-mode]").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.mode = btn.dataset.mode;
+    updateUI();
+  };
+});
+
+document.querySelectorAll("[data-session]").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("[data-session]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.session = btn.dataset.session;
+    updateUI();
+  };
+});
+
+document.getElementById("saveTradeBtn").onclick = () => {
+  const score = computeScore();
+  const result = document.getElementById("resultField").value || "Unlogged";
+  const feedback = buildFeedback(score, result);
+  document.getElementById("feedbackCard").classList.add("show");
+  document.getElementById("feedbackTitle").textContent = feedback.title;
+  document.getElementById("feedbackQuality").textContent = "Trade Quality: " + feedback.quality;
+  document.getElementById("feedbackDiscipline").textContent = "Discipline: " + feedback.discipline;
+  document.getElementById("feedbackResult").textContent = "Result: " + result;
+
+  const wentWell = document.getElementById("wentWell");
+  const improveList = document.getElementById("improveList");
+  wentWell.innerHTML = "";
+  improveList.innerHTML = "";
+
+  feedback.wentWell.forEach(x => {
+    const li = document.createElement("li");
+    li.textContent = x;
+    wentWell.appendChild(li);
+  });
+
+  feedback.improve.forEach(x => {
+    const li = document.createElement("li");
+    li.textContent = x;
+    improveList.appendChild(li);
+  });
+
+  document.getElementById("nextFocus").textContent = feedback.nextFocus;
+  document.getElementById("feedbackCard").scrollIntoView({behavior:"smooth", block:"center"});
+};
+
+function buildFeedback(score, result){
+  const validBias = state.checked.htf_bias;
+  const validClose = state.checked.no_wick_only;
+  const validSL = state.checked.stop_loss;
+  const cleanCorrection = state.checked.clean_pullback && state.checked.retest_close;
+  const validEntry = state.checked.continuation_close && state.checked.limit_entry;
+  const disciplineNum = Math.min(100, Math.max(0, score + (result === "Win" ? 4 : result === "Loss" ? -2 : 0)));
+  const discipline = disciplineNum + "%";
+
+  if (result === "Win" && score >= 85 && validBias && validClose && validSL){
+    return {
+      title: "Good trade",
+      quality: "A",
+      discipline,
+      wentWell: [
+        "You followed confirmation before entry.",
+        "The setup quality was strong.",
+        "Risk was defined before execution."
+      ],
+      improve: [
+        "Keep repeating this exact process.",
+        "Do not add unnecessary trades after a clean win."
+      ],
+      nextFocus: "Stay patient and only take ICC trades that look this complete."
+    };
+  }
+
+  if (result === "Win" && score < 85){
+    return {
+      title: "Profitable, but not clean",
+      quality: "B",
+      discipline,
+      wentWell: [
+        "The trade paid, but you still captured the move.",
+        "Some structure pieces were in place."
+      ],
+      improve: [
+        validBias ? "Bias was okay, but more confirmation was needed elsewhere." : "Define your HTF bias first next time.",
+        validClose ? "Do not let profit reward sloppy entries." : "Wait for candle close, not wick-only movement."
+      ],
+      nextFocus: "Make the next win clean, not just profitable."
+    };
+  }
+
+  if (result === "Loss" && score >= 75){
+    return {
+      title: "Good process, bad outcome",
+      quality: "B",
+      discipline,
+      wentWell: [
+        "A losing trade can still be a valid trade.",
+        "The setup had enough confirmation to take."
+      ],
+      improve: [
+        "Review whether the entry could have been tighter.",
+        cleanCorrection ? "Your correction logic looked solid." : "Let the correction fully complete before entry."
+      ],
+      nextFocus: "Keep trusting valid process. Losses happen even with good execution."
+    };
+  }
+
+  if (result === "Loss" && score < 75){
+    return {
+      title: "Rule violation",
+      quality: "C",
+      discipline,
+      wentWell: [
+        "You logged the trade instead of ignoring it.",
+        "That gives you something real to improve."
+      ],
+      improve: [
+        validBias ? "You had some direction, but not enough confirmation." : "You traded without clear 1H / 4H bias.",
+        validEntry ? "Entry logic needs more patience." : "You likely entered before full continuation confirmation.",
+        validSL ? "Stop loss existed, but setup quality was weak." : "A missing or weak stop-loss plan makes the trade invalid."
+      ],
+      nextFocus: "Slow down. Wait for bias, candle close, correction completion, then continuation."
+    };
+  }
+
+  return {
+    title: "Post-trade review",
+    quality: score >= 75 ? "B" : "C",
+    discipline,
+    wentWell: [
+      "Your checklist score is saved into the journal flow.",
+      "You can now compare this trade against future ICC trades."
+    ],
+    improve: [
+      "Log the outcome to get stronger feedback.",
+      "Use the phase cards before taking the next trade."
+    ],
+    nextFocus: "Build a habit of checking every phase before execution."
+  };
+}
+
+updateUI();
+</script>
 </body>
 </html>
