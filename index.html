@@ -1060,6 +1060,37 @@ textarea.field{min-height:88px;resize:vertical;}
 .sessionStable .text{font-size:13px;font-weight:700;}
 @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
 
+
+/* ===== STYLE BUTTON HARD FIX ===== */
+#styleHardPanel{
+  position: fixed;
+  top: 115px;
+  right: 28px;
+  z-index: 999999;
+  width: 220px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(20,11,36,.98), rgba(8,6,16,.99));
+  box-shadow: 0 20px 50px rgba(0,0,0,.5), 0 0 24px rgba(200,124,255,.25);
+  backdrop-filter: blur(16px);
+}
+#styleHardPanel.open{display:flex !important;}
+#styleHardPanel .styleOpt{
+  padding: 12px 14px;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  text-align: left;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(180deg,var(--pillA),var(--pillB));
+  border: 1px solid rgba(255,255,255,.1);
+}
+
 </style>
 </head>
 <body class="theme-soft-purple">
@@ -4198,6 +4229,64 @@ if(panel) panel.classList.toggle('open');
 };
 }
 });
+})();
+</script>
+
+
+<div id="styleHardPanel">
+  <button class="styleOpt" type="button" data-theme-hard="theme-soft-purple">Soft Purple</button>
+  <button class="styleOpt" type="button" data-theme-hard="theme-bright-purple">Bright Purple</button>
+  <button class="styleOpt" type="button" data-theme-hard="theme-soft-bluegreen">Soft Blue-Green</button>
+  <button class="styleOpt" type="button" data-theme-hard="theme-bright-bluegreen">Bright Blue-Green</button>
+</div>
+
+
+<script>
+(function(){
+  function hardApplyTheme(themeClass){
+    document.body.classList.remove('theme-soft-purple','theme-bright-purple','theme-soft-bluegreen','theme-bright-bluegreen');
+    document.body.classList.add(themeClass);
+    try{ localStorage.setItem('faceless_theme_choice', themeClass); }catch(e){}
+  }
+
+  function bindStyleHard(){
+    const panel = document.getElementById('styleHardPanel');
+    if(!panel) return;
+
+    const styleBtn =
+      document.getElementById('styleToggle') ||
+      document.getElementById('styleCycleBtn') ||
+      Array.from(document.querySelectorAll('button')).find(b => (b.textContent || '').trim().startsWith('Style'));
+
+    if(styleBtn){
+      styleBtn.onclick = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        panel.classList.toggle('open');
+      };
+    }
+
+    panel.querySelectorAll('[data-theme-hard]').forEach(btn => {
+      btn.onclick = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        hardApplyTheme(this.getAttribute('data-theme-hard'));
+        panel.classList.remove('open');
+      };
+    });
+
+    document.addEventListener('click', function(e){
+      if(styleBtn && (e.target === styleBtn || styleBtn.contains(e.target) || panel.contains(e.target))) return;
+      panel.classList.remove('open');
+    });
+
+    try{
+      const saved = localStorage.getItem('faceless_theme_choice');
+      if(saved) hardApplyTheme(saved);
+    }catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', bindStyleHard);
 })();
 </script>
 
