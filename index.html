@@ -1003,93 +1003,62 @@ textarea.field{min-height:88px;resize:vertical;}
 }
 
 
-/* ===== Real Session Status Upgrade ===== */
-.sessionStatusReal .sessionTop{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:6px 0 6px;
+/* final style + sync fix */
+.style-wrap{
+  position:absolute !important;
+  right:14px !important;
+  bottom:14px !important;
+  z-index:10050 !important;
 }
-.sessionStatusReal .sessionFlag{
-  font-size:24px;
-  line-height:1;
+#styleToggle{
+  position:relative !important;
+  z-index:10051 !important;
+  pointer-events:auto !important;
 }
-.sessionStatusReal .sessionMain{
-  font-size:18px;
-  font-weight:900;
-  line-height:1.1;
+#dropdown{
+  position:absolute !important;
+  right:0 !important;
+  top:56px !important;
+  z-index:10052 !important;
+  pointer-events:auto !important;
 }
-.sessionStatusReal .sessionSub{
-  color:#d9ccff;
-  font-size:13px;
-  margin-bottom:10px;
+#dropdown.open{
+  display:flex !important;
 }
-.sessionStatusReal .sessionLed{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:999px;
+.ghost-cycle{
+  display:none !important;
+}
+
+
+/* ===== STABLE SESSION CARD ===== */
+.sessionStable{
+  padding:14px;
+  border-radius:18px;
   border:1px solid rgba(255,255,255,.12);
-  font-weight:800;
-  font-size:14px;
-  margin-bottom:10px;
+  background:linear-gradient(180deg, rgba(25,14,50,.85), rgba(10,6,20,.95));
 }
-.sessionStatusReal .ledDot{
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  display:inline-block;
-  animation: sessionPulse 1.4s infinite ease-in-out;
+.sessionStable .top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.sessionStable .flag{font-size:24px;}
+.sessionStable .name{font-size:18px;font-weight:900;}
+.sessionStable .sub{font-size:13px;color:#d8cbff;margin-bottom:10px;}
+.sessionStable .led{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 14px;
+  border-radius:999px;font-weight:800;margin-bottom:10px;
 }
-.sessionStatusReal .sessionLed.active{
-  background:linear-gradient(180deg, rgba(34,90,70,.92), rgba(14,42,33,.92));
-  color:#dfffee;
-  box-shadow:0 0 18px rgba(90,255,180,.22), inset 0 0 10px rgba(90,255,180,.14);
+.sessionStable .dot{
+  width:10px;height:10px;border-radius:999px;
+  animation:pulse 1.4s infinite;
 }
-.sessionStatusReal .sessionLed.active .ledDot{
-  background:#66ffc7;
-  box-shadow:0 0 14px rgba(102,255,199,.9);
-}
-.sessionStatusReal .sessionLed.waiting{
-  background:linear-gradient(180deg, rgba(104,83,28,.92), rgba(52,41,12,.92));
-  color:#fff3bf;
-  box-shadow:0 0 18px rgba(255,224,99,.18), inset 0 0 10px rgba(255,224,99,.12);
-}
-.sessionStatusReal .sessionLed.waiting .ledDot{
-  background:#ffd75f;
-  box-shadow:0 0 14px rgba(255,215,95,.8);
-}
-.sessionStatusReal .sessionLed.overlap{
-  background:linear-gradient(180deg, rgba(83,48,130,.95), rgba(29,18,59,.95));
-  color:#f1e4ff;
-  box-shadow:0 0 20px rgba(200,124,255,.26), 0 0 30px rgba(106,255,200,.12), inset 0 0 10px rgba(255,255,255,.08);
-}
-.sessionStatusReal .sessionLed.overlap .ledDot{
-  background:linear-gradient(135deg,#c87cff,#6affc8);
-  box-shadow:0 0 16px rgba(200,124,255,.8);
-}
-.sessionStatusReal .miniBlock{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background:linear-gradient(180deg, rgba(30,20,54,.72), rgba(12,8,24,.82));
-}
-.sessionStatusReal .miniLabel{
-  font-size:11px;
-  color:#d9ccff;
-  margin-bottom:4px;
-}
-.sessionStatusReal .miniText{
-  font-size:13px;
-  line-height:1.35;
-  font-weight:700;
-}
-@keyframes sessionPulse{
-  0%,100%{transform:scale(.88);opacity:.7}
-  50%{transform:scale(1.1);opacity:1}
-}
+.sessionStable .active{background:#143b2f;color:#dfffee;}
+.sessionStable .waiting{background:#4a3a12;color:#fff3bf;}
+.sessionStable .overlap{background:#3a1f6e;color:#f1e4ff;}
+.sessionStable .active .dot{background:#66ffc7;}
+.sessionStable .waiting .dot{background:#ffd75f;}
+.sessionStable .overlap .dot{background:linear-gradient(135deg,#c87cff,#6affc8);}
+.sessionStable .block{margin-top:10px;}
+.sessionStable .label{font-size:11px;color:#d8cbff;}
+.sessionStable .text{font-size:13px;font-weight:700;}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
 
 </style>
 </head>
@@ -1122,9 +1091,7 @@ textarea.field{min-height:88px;resize:vertical;}
         <div class="pill" id="todayBadge">No goal active</div>
       </div>
       <div class="card">
-        <div class="label">Session Status</div><div style="display:none"></div>
-        <div class="value" id="sessionStatus">Waiting</div>
-        <div class="pill" id="themeBadge">Soft Purple</div>
+        <div class="label">Session Status</div><div id="sessionContainer"></div></div>
       </div>
     </div>
 
@@ -3672,57 +3639,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const styleBtn = document.getElementById('styleCycleBtn');
-  const panel = document.getElementById('themePanel');
-  const body = document.body;
-  const badge = document.getElementById('themeBadge');
 
-  function setTheme(themeClass){
-    body.classList.remove('theme-soft-purple','theme-bright-purple','theme-soft-bluegreen','theme-bright-bluegreen');
-    body.classList.add(themeClass);
-    try{ localStorage.setItem('faceless_theme_choice', themeClass); }catch(e){}
-    if(badge){
-      const labels = {
-        'theme-soft-purple': 'Soft Purple',
-        'theme-bright-purple': 'Bright Purple',
-        'theme-soft-bluegreen': 'Soft Blue-Green',
-        'theme-bright-bluegreen': 'Bright Blue-Green'
-      };
-      badge.textContent = labels[themeClass] || 'Theme';
-    }
-  }
-
-  try{
-    const saved = localStorage.getItem('faceless_theme_choice');
-    if(saved){ setTheme(saved); }
-  }catch(e){}
-
-  if(styleBtn && panel){
-    styleBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      panel.classList.toggle('open');
-    });
-
-    panel.querySelectorAll('[data-theme]').forEach(btn => {
-      btn.addEventListener('click', function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        setTheme(this.getAttribute('data-theme'));
-        panel.classList.remove('open');
-      });
-    });
-
-    document.addEventListener('click', function(e){
-      if(!panel.contains(e.target) && e.target !== styleBtn){
-        panel.classList.remove('open');
-      }
-    });
-  }
-});
-</script>
 
 
 <script>
@@ -4061,133 +3978,226 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 <script>
-(function(){
-  function mins(h,m){ return h*60+m; }
-  const sessions = [
-    {
-      key:'asia',
-      name:'Asia',
-      flag:'🌏',
-      start:mins(18,0),
-      end:mins(3,0),
-      best:'7 PM – 11 PM · 1 AM – 3 AM',
-      meaning:'Setup session. Build levels, slower price action, good for preparation.'
-    },
-    {
-      key:'london',
-      name:'London',
-      flag:'🇬🇧',
-      start:mins(3,0),
-      end:mins(11,0),
-      best:'3 AM – 6 AM',
-      meaning:'Momentum session. Strong directional moves and cleaner breakouts.'
-    },
-    {
-      key:'ny',
-      name:'NY',
-      flag:'🇺🇸',
-      start:mins(8,0),
-      end:mins(16,0),
-      best:'8 AM – 11 AM 🔥🔥 · 9:30 AM open volatility',
-      meaning:'Power session. Highest probability trades and biggest moves.'
-    }
-  ];
+document.addEventListener('DOMContentLoaded', function(){
+  const styleBtn = document.getElementById('styleToggle');
+  const dropdown = document.getElementById('dropdown');
+  const badge = document.getElementById('themeBadge');
+  const body = document.body;
 
-  function format12(total){
-    let h = Math.floor(total/60) % 24;
-    let m = total % 60;
-    const suffix = h >= 12 ? 'PM' : 'AM';
-    let display = h % 12;
-    if(display === 0) display = 12;
-    return `${display}:${String(m).padStart(2,'0')} ${suffix}`;
+  function setTheme(themeClass){
+    body.classList.remove('theme-soft-purple','theme-bright-purple','theme-soft-bluegreen','theme-bright-bluegreen');
+    body.classList.add(themeClass);
+
+    const labels = {
+      'theme-soft-purple': 'Soft Purple',
+      'theme-bright-purple': 'Bright Purple',
+      'theme-soft-bluegreen': 'Soft Blue-Green',
+      'theme-bright-bluegreen': 'Bright Blue-Green'
+    };
+
+    if(badge) badge.textContent = labels[themeClass] || 'Theme';
+
+    document.querySelectorAll('#dropdown .option[data-theme]').forEach(opt => {
+      opt.classList.toggle('active', opt.getAttribute('data-theme') === themeClass);
+    });
+
+    try{ localStorage.setItem('faceless_theme_choice', themeClass); }catch(e){}
   }
 
-  function sessionRange(s){ return `${format12(s.start)} – ${format12(s.end)}`; }
+  try{
+    const savedTheme = localStorage.getItem('faceless_theme_choice');
+    if(savedTheme) setTheme(savedTheme);
+  }catch(e){}
 
-  function inSession(nowMin, s){
-    if(s.start < s.end) return nowMin >= s.start && nowMin < s.end;
-    return nowMin >= s.start || nowMin < s.end;
-  }
+  if(styleBtn && dropdown){
+    styleBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+      this.setAttribute('aria-expanded', dropdown.classList.contains('open') ? 'true' : 'false');
+    });
 
-  function minsUntil(nowMin, target){
-    const d = target - nowMin;
-    return d >= 0 ? d : 1440 + d;
-  }
+    dropdown.querySelectorAll('.option[data-theme]').forEach(opt => {
+      opt.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        const theme = this.getAttribute('data-theme');
+        setTheme(theme);
+        dropdown.classList.remove('open');
+        if(styleBtn) styleBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
 
-  function countdown(n){
-    const h = Math.floor(n/60);
-    const m = n % 60;
-    return h > 0 ? `${h}h ${m}m` : `${m}m`;
-  }
-
-  function renderSession(){
-    const flag = document.getElementById('sessionFlag');
-    const main = document.getElementById('sessionMain');
-    const sub = document.getElementById('sessionSub');
-    const led = document.getElementById('sessionLed');
-    const ledText = document.getElementById('sessionLedText');
-    const best = document.getElementById('sessionBestText');
-    const meaning = document.getElementById('sessionMeaningText');
-    const nxt = document.getElementById('sessionNextText');
-    if(!flag || !main || !sub || !led || !ledText || !best || !meaning || !nxt) return;
-
-    const now = new Date();
-    const nowMin = now.getHours()*60 + now.getMinutes();
-
-    const active = sessions.filter(s => inSession(nowMin, s));
-    const london = active.find(s => s.key === 'london');
-    const ny = active.find(s => s.key === 'ny');
-
-    const next = sessions
-      .map(s => ({...s, until: minsUntil(nowMin, s.start)}))
-      .sort((a,b) => a.until - b.until)[0];
-
-    led.classList.remove('active','waiting','overlap');
-
-    if(london && ny){
-      flag.textContent = '🔥';
-      main.textContent = 'London + NY Overlap';
-      sub.textContent = '8:00 AM – 11:00 AM';
-      led.classList.add('overlap');
-      ledText.textContent = 'Best Trading Window';
-      best.textContent = '8 AM – 11 AM 🔥🔥 ← Best of the day';
-      meaning.textContent = 'Highest probability trades, strongest momentum, best overlap window.';
-      nxt.textContent = `Next: ${next.flag} ${next.name} in ${countdown(next.until)}`;
-      return;
-    }
-
-    if(active.length){
-      const s = active[0];
-      flag.textContent = s.flag;
-      main.textContent = `${s.name} Session`;
-      sub.textContent = sessionRange(s);
-      if(s.key === 'asia'){
-        led.classList.add('waiting');
-        ledText.textContent = 'Setup Session';
-      } else {
-        led.classList.add('active');
-        ledText.textContent = s.key === 'london' ? 'Momentum Session' : 'Power Session';
+    document.addEventListener('click', function(e){
+      if(!dropdown.contains(e.target) && e.target !== styleBtn && !styleBtn.contains(e.target)){
+        dropdown.classList.remove('open');
+        styleBtn.setAttribute('aria-expanded', 'false');
       }
-      best.textContent = s.best;
-      meaning.textContent = s.meaning;
-      nxt.textContent = `Next: ${next.flag} ${next.name} in ${countdown(next.until)}`;
-      return;
-    }
-
-    flag.textContent = next.flag;
-    main.textContent = 'Off Session';
-    sub.textContent = 'No active tradable session';
-    led.classList.add('waiting');
-    ledText.textContent = 'Waiting';
-    best.textContent = `${next.name} starts in ${countdown(next.until)}`;
-    meaning.textContent = 'Off session. Wait for a tradable window or use this time to mark levels and prepare.';
-    nxt.textContent = `${next.flag} ${next.name} · ${sessionRange(next)}`;
+    });
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    renderSession();
-    setInterval(renderSession, 30000);
+  function getConnectedState(){
+    try{
+      return JSON.parse(localStorage.getItem('faceless_connected_state_v1') || '{}');
+    }catch(e){
+      return {};
+    }
+  }
+
+  function syncSystemUI(){
+    const psychScoreEl = document.getElementById('psychScore');
+    const stateEl = document.getElementById('lockStateText');
+    const reasonEl = document.getElementById('lockReasonText');
+    const tradeCountEl = document.getElementById('lockTradeCount');
+    const lockTabs = document.querySelectorAll('#mainTabs .pill[data-view="strategy"], #mainTabs .pill[data-view="live"]');
+
+    const psychScore = psychScoreEl ? (parseInt((psychScoreEl.textContent || '0').replace(/[^0-9]/g,''),10) || 0) : 0;
+    const c = getConnectedState();
+
+    const totalEntries = Number(c.totalEntries || 0);
+    const fundedPnL = Number(c.fundedPnL || 0);
+    const livePnL = Number(c.livePnL || 0);
+    const forceLocked = !!c.forceLocked;
+    const forceUnlocked = !!c.forceUnlocked;
+
+    let locked = false;
+    let reason = 'Ready to trade.';
+
+    if(forceLocked){
+      locked = true;
+      reason = 'Manual lock is on.';
+    } else if(!forceUnlocked && psychScore < 80){
+      locked = true;
+      reason = 'Complete Psychology checklist to 80% first.';
+    } else if(totalEntries >= 5){
+      locked = true;
+      reason = 'Daily trade cap hit.';
+    } else if(fundedPnL <= -300){
+      locked = true;
+      reason = 'Funded loss floor hit.';
+    } else if(livePnL <= -300){
+      locked = true;
+      reason = 'Live loss floor hit.';
+    }
+
+    window.__facelessTradeLocked = locked;
+
+    if(stateEl) stateEl.textContent = locked ? 'LOCKED' : 'UNLOCKED';
+    if(reasonEl) reasonEl.textContent = reason;
+    if(tradeCountEl) tradeCountEl.textContent = String(totalEntries);
+
+    lockTabs.forEach(tab => tab.classList.toggle('locked', locked));
+  }
+
+  // Keep sync responsive when psych or connected data changes
+  document.querySelectorAll('#psych .psych-rule').forEach(rule => {
+    rule.addEventListener('click', function(){
+      setTimeout(syncSystemUI, 40);
+    });
   });
+
+  const journalBtn = document.querySelector('.cta[onclick="saveJournal()"], .cta');
+  if(journalBtn){
+    journalBtn.addEventListener('click', function(){
+      setTimeout(syncSystemUI, 80);
+    });
+  }
+
+  document.querySelectorAll('#mainTabs .pill[data-view]').forEach(tab => {
+    tab.addEventListener('click', function(e){
+      const viewId = this.getAttribute('data-view');
+      if(window.__facelessTradeLocked && (viewId === 'strategy' || viewId === 'live')){
+        e.preventDefault();
+        e.stopPropagation();
+        alert('🔒 Trading is locked right now.');
+      }
+    }, true);
+  });
+
+  syncSystemUI();
+  setInterval(syncSystemUI, 1200);
+});
+</script>
+
+
+<script>
+(function(){
+function mins(h,m){return h*60+m;}
+const sessions=[
+{key:'asia',name:'Asia',flag:'🌏',start:mins(18,0),end:mins(3,0),best:'7 PM – 11 PM · 1 AM – 3 AM',meaning:'Setup session. Build levels.'},
+{key:'london',name:'London',flag:'🇬🇧',start:mins(3,0),end:mins(11,0),best:'3 AM – 6 AM',meaning:'Momentum session. Clean moves.'},
+{key:'ny',name:'NY',flag:'🇺🇸',start:mins(8,0),end:mins(16,0),best:'8 AM – 11 AM',meaning:'Power session. High probability.'}
+];
+
+function inSession(now,s){
+if(s.start<s.end) return now>=s.start&&now<s.end;
+return now>=s.start||now<s.end;
+}
+
+function nextSession(now){
+return sessions.map(s=>({...s,until:(s.start-now+1440)%1440}))
+.sort((a,b)=>a.until-b.until)[0];
+}
+
+function render(){
+const el=document.getElementById('sessionContainer');
+if(!el) return;
+
+const now=new Date();
+const nowMin=now.getHours()*60+now.getMinutes();
+
+const active=sessions.filter(s=>inSession(nowMin,s));
+const london=active.find(s=>s.key==='london');
+const ny=active.find(s=>s.key==='ny');
+
+let data={};
+const next=nextSession(nowMin);
+
+if(london&&ny){
+data={flag:'🔥',name:'Overlap',sub:'8-11 AM',status:'Best Window',best:'8-11 AM',meaning:'Highest probability',cls:'overlap'};
+}else if(active.length){
+const s=active[0];
+data={flag:s.flag,name:s.name,sub:'Active',status:s.name+' Session',best:s.best,meaning:s.meaning,cls:s.key==='asia'?'waiting':'active'};
+}else{
+data={flag:next.flag,name:'Transition',sub:'Next in '+Math.floor(next.until/60)+'h '+(next.until%60)+'m',status:'Wait',best:'Wait for '+next.name,meaning:'Low probability',cls:'waiting'};
+}
+
+el.innerHTML=`
+<div class="sessionStable">
+  <div class="top">
+    <div class="flag">${data.flag}</div>
+    <div class="name">${data.name}</div>
+  </div>
+  <div class="sub">${data.sub}</div>
+  <div class="led ${data.cls}">
+    <span class="dot"></span>
+    ${data.status}
+  </div>
+  <div class="block">
+    <div class="label">Best</div>
+    <div class="text">${data.best}</div>
+  </div>
+  <div class="block">
+    <div class="label">Meaning</div>
+    <div class="text">${data.meaning}</div>
+  </div>
+</div>`;
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+render();
+setInterval(render,30000);
+
+// Fix style button
+const btn=document.getElementById('styleToggle')||document.getElementById('styleCycleBtn');
+if(btn){
+btn.onclick=function(e){
+e.stopPropagation();
+const panel=document.getElementById('themePanel')||document.getElementById('dropdown');
+if(panel) panel.classList.toggle('open');
+};
+}
+});
 })();
 </script>
 
