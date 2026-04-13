@@ -1091,6 +1091,112 @@ textarea.field{min-height:88px;resize:vertical;}
   border: 1px solid rgba(255,255,255,.1);
 }
 
+
+/* ===== FINAL STYLE PANEL + LIVE SESSION COUNTDOWN ===== */
+#themePanel, #dropdown, #hardStylePanel{
+  display:none !important;
+}
+#styleMenuLite{
+  position:fixed;
+  top:88px;
+  right:22px;
+  z-index:999999;
+  width:190px;
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding:10px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg, rgba(20,11,36,.98), rgba(8,6,16,.99));
+  box-shadow:0 20px 50px rgba(0,0,0,.5), 0 0 24px rgba(200,124,255,.25);
+  backdrop-filter:blur(16px);
+}
+#styleMenuLite.open{display:flex !important;}
+#styleMenuLite .opt{
+  padding:12px 14px;
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  text-align:left;
+  font-weight:800;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--pillA),var(--pillB));
+  border:1px solid rgba(255,255,255,.1);
+}
+.sessionStable .countdown{
+  margin-top:2px;
+  font-size:14px;
+  color:#eadcff;
+  font-weight:700;
+}
+.sessionStable .countdown strong{
+  color:#fff;
+  font-size:16px;
+}
+
+
+/* ===== FINAL ICON THEME MENU ===== */
+#styleIconMenu{
+  position:fixed;
+  top:92px;
+  right:20px;
+  z-index:999999;
+  width:132px;
+  display:none;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:12px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg, rgba(20,11,36,.98), rgba(8,6,16,.99));
+  box-shadow:0 20px 50px rgba(0,0,0,.5), 0 0 24px rgba(200,124,255,.25);
+  backdrop-filter:blur(16px);
+}
+#styleIconMenu.open{display:grid !important;}
+#styleIconMenu .themeIconBtn{
+  height:48px;
+  width:48px;
+  display:grid;
+  place-items:center;
+  border:none;
+  border-radius:16px;
+  color:#fff;
+  font-size:24px;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--pillA),var(--pillB));
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:inset 0 0 10px rgba(255,255,255,.04);
+}
+#styleIconMenu .themeIconBtn.active{
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--glowA) 75%, transparent),
+    inset 0 0 12px rgba(255,255,255,.14);
+  transform:scale(1.03);
+}
+#styleIconMenu .themeIconBtn:active{
+  transform:scale(.97);
+}
+
+/* ensure style button is always clickable */
+#styleToggle, #styleCycleBtn, .styleBtn{
+  position:relative !important;
+  z-index:100001 !important;
+  pointer-events:auto !important;
+}
+
+/* stable session countdown */
+.sessionStable .countdown{
+  margin-top:4px;
+  font-size:14px;
+  color:#eadcff;
+  font-weight:700;
+}
+.sessionStable .countdown strong{
+  color:#fff;
+  font-size:16px;
+}
+
 </style>
 </head>
 <body class="theme-soft-purple">
@@ -4151,142 +4257,335 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 
-<script>
-(function(){
-function mins(h,m){return h*60+m;}
-const sessions=[
-{key:'asia',name:'Asia',flag:'🌏',start:mins(18,0),end:mins(3,0),best:'7 PM – 11 PM · 1 AM – 3 AM',meaning:'Setup session. Build levels.'},
-{key:'london',name:'London',flag:'🇬🇧',start:mins(3,0),end:mins(11,0),best:'3 AM – 6 AM',meaning:'Momentum session. Clean moves.'},
-{key:'ny',name:'NY',flag:'🇺🇸',start:mins(8,0),end:mins(16,0),best:'8 AM – 11 AM',meaning:'Power session. High probability.'}
-];
-
-function inSession(now,s){
-if(s.start<s.end) return now>=s.start&&now<s.end;
-return now>=s.start||now<s.end;
-}
-
-function nextSession(now){
-return sessions.map(s=>({...s,until:(s.start-now+1440)%1440}))
-.sort((a,b)=>a.until-b.until)[0];
-}
-
-function render(){
-const el=document.getElementById('sessionContainer');
-if(!el) return;
-
-const now=new Date();
-const nowMin=now.getHours()*60+now.getMinutes();
-
-const active=sessions.filter(s=>inSession(nowMin,s));
-const london=active.find(s=>s.key==='london');
-const ny=active.find(s=>s.key==='ny');
-
-let data={};
-const next=nextSession(nowMin);
-
-if(london&&ny){
-data={flag:'🔥',name:'Overlap',sub:'8-11 AM',status:'Best Window',best:'8-11 AM',meaning:'Highest probability',cls:'overlap'};
-}else if(active.length){
-const s=active[0];
-data={flag:s.flag,name:s.name,sub:'Active',status:s.name+' Session',best:s.best,meaning:s.meaning,cls:s.key==='asia'?'waiting':'active'};
-}else{
-data={flag:next.flag,name:'Transition',sub:'Next in '+Math.floor(next.until/60)+'h '+(next.until%60)+'m',status:'Wait',best:'Wait for '+next.name,meaning:'Low probability',cls:'waiting'};
-}
-
-el.innerHTML=`
-<div class="sessionStable">
-  <div class="top">
-    <div class="flag">${data.flag}</div>
-    <div class="name">${data.name}</div>
-  </div>
-  <div class="sub">${data.sub}</div>
-  <div class="led ${data.cls}">
-    <span class="dot"></span>
-    ${data.status}
-  </div>
-  <div class="block">
-    <div class="label">Best</div>
-    <div class="text">${data.best}</div>
-  </div>
-  <div class="block">
-    <div class="label">Meaning</div>
-    <div class="text">${data.meaning}</div>
-  </div>
-</div>`;
-}
-
-document.addEventListener('DOMContentLoaded',function(){
-render();
-setInterval(render,30000);
-
-// Fix style button
-const btn=document.getElementById('styleToggle')||document.getElementById('styleCycleBtn');
-if(btn){
-btn.onclick=function(e){
-e.stopPropagation();
-const panel=document.getElementById('themePanel')||document.getElementById('dropdown');
-if(panel) panel.classList.toggle('open');
-};
-}
-});
-})();
-</script>
 
 
-<div id="styleHardPanel">
-  <button class="styleOpt" type="button" data-theme-hard="theme-soft-purple">Soft Purple</button>
-  <button class="styleOpt" type="button" data-theme-hard="theme-bright-purple">Bright Purple</button>
-  <button class="styleOpt" type="button" data-theme-hard="theme-soft-bluegreen">Soft Blue-Green</button>
-  <button class="styleOpt" type="button" data-theme-hard="theme-bright-bluegreen">Bright Blue-Green</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="styleIconMenu" aria-hidden="true">
+  <button class="themeIconBtn" type="button" data-theme-icon="theme-soft-purple" title="Soft Purple">🌙</button>
+  <button class="themeIconBtn" type="button" data-theme-icon="theme-bright-purple" title="Bright Purple">💜</button>
+  <button class="themeIconBtn" type="button" data-theme-icon="theme-soft-bluegreen" title="Soft Blue-Green">🌊</button>
+  <button class="themeIconBtn" type="button" data-theme-icon="theme-bright-bluegreen" title="Bright Blue-Green">💚</button>
 </div>
 
 
 <script>
 (function(){
-  function hardApplyTheme(themeClass){
-    document.body.classList.remove('theme-soft-purple','theme-bright-purple','theme-soft-bluegreen','theme-bright-bluegreen');
+  function byId(id){ return document.getElementById(id); }
+
+  function applyTheme(themeClass){
+    document.body.classList.remove(
+      'theme-soft-purple',
+      'theme-bright-purple',
+      'theme-soft-bluegreen',
+      'theme-bright-bluegreen'
+    );
     document.body.classList.add(themeClass);
     try{ localStorage.setItem('faceless_theme_choice', themeClass); }catch(e){}
+    document.querySelectorAll('#styleIconMenu .themeIconBtn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme-icon') === themeClass);
+    });
   }
 
-  function bindStyleHard(){
-    const panel = document.getElementById('styleHardPanel');
-    if(!panel) return;
+  function bindFinalStyleMenu(){
+    const menu = byId('styleIconMenu');
+    if(!menu) return;
 
     const styleBtn =
-      document.getElementById('styleToggle') ||
-      document.getElementById('styleCycleBtn') ||
+      byId('styleToggle') ||
+      byId('styleCycleBtn') ||
       Array.from(document.querySelectorAll('button')).find(b => (b.textContent || '').trim().startsWith('Style'));
 
     if(styleBtn){
       styleBtn.onclick = function(e){
         e.preventDefault();
         e.stopPropagation();
-        panel.classList.toggle('open');
+        menu.classList.toggle('open');
       };
     }
 
-    panel.querySelectorAll('[data-theme-hard]').forEach(btn => {
+    menu.querySelectorAll('[data-theme-icon]').forEach(btn => {
       btn.onclick = function(e){
         e.preventDefault();
         e.stopPropagation();
-        hardApplyTheme(this.getAttribute('data-theme-hard'));
-        panel.classList.remove('open');
+        applyTheme(this.getAttribute('data-theme-icon'));
+        menu.classList.remove('open');
       };
     });
 
     document.addEventListener('click', function(e){
-      if(styleBtn && (e.target === styleBtn || styleBtn.contains(e.target) || panel.contains(e.target))) return;
-      panel.classList.remove('open');
+      if(styleBtn && (e.target === styleBtn || styleBtn.contains(e.target) || menu.contains(e.target))) return;
+      menu.classList.remove('open');
     });
 
     try{
       const saved = localStorage.getItem('faceless_theme_choice');
-      if(saved) hardApplyTheme(saved);
+      if(saved) applyTheme(saved);
+      else applyTheme('theme-soft-purple');
+    }catch(e){
+      applyTheme('theme-soft-purple');
+    }
+  }
+
+  function mins(h,m){ return h*60 + m; }
+  const sessions = [
+    {
+      key:'asia',
+      name:'Asia Session',
+      flag:'🌏',
+      start:mins(18,0),
+      end:mins(3,0),
+      best:'7 PM – 11 PM · 1 AM – 3 AM',
+      meaning:'Setup session. Build levels and prepare.'
+    },
+    {
+      key:'london',
+      name:'London Session',
+      flag:'🇬🇧',
+      start:mins(3,0),
+      end:mins(11,0),
+      best:'3 AM – 6 AM',
+      meaning:'Momentum session. Strong directional moves and cleaner breakouts.'
+    },
+    {
+      key:'ny',
+      name:'NY Session',
+      flag:'🇺🇸',
+      start:mins(8,0),
+      end:mins(16,0),
+      best:'8 AM – 11 AM 🔥🔥 · 9:30 AM open volatility',
+      meaning:'Power session. Highest probability trades and biggest moves.'
+    }
+  ];
+
+  function inSession(nowMin, s){
+    if(s.start < s.end) return nowMin >= s.start && nowMin < s.end;
+    return nowMin >= s.start || nowMin < s.end;
+  }
+
+  function sessionRange(s){ return fmtClock(s.start) + ' – ' + fmtClock(s.end); }
+
+  function fmtClock(totalMinutes){
+    let h = Math.floor(totalMinutes/60) % 24;
+    let m = totalMinutes % 60;
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    let display = h % 12;
+    if(display === 0) display = 12;
+    return display + ':' + String(m).padStart(2,'0') + ' ' + suffix;
+  }
+
+  function fmtCountdown(totalSeconds){
+    totalSeconds = Math.max(0, totalSeconds);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  function secondsUntil(nowSeconds, targetSeconds){
+    let diff = targetSeconds - nowSeconds;
+    if(diff < 0) diff += 24 * 3600;
+    return diff;
+  }
+
+  function nextSession(nowMinutes, nowSeconds){
+    return sessions
+      .map(s => ({...s, until: secondsUntil(nowSeconds, s.start * 60)}))
+      .sort((a,b) => a.until - b.until)[0];
+  }
+
+  function ensureSessionContainer(){
+    let container = byId('sessionContainer');
+    if(container) return container;
+
+    const labels = Array.from(document.querySelectorAll('.label, .sectionTitle, div'));
+    const targetLabel = labels.find(el => (el.textContent || '').trim() === 'Session Status');
+    if(!targetLabel) return null;
+    const card = targetLabel.closest('.kpi') || targetLabel.closest('.stat') || targetLabel.parentElement;
+    if(!card) return null;
+
+    card.innerHTML = '<div class="label">Session Status</div><div id="sessionContainer"></div>';
+    return byId('sessionContainer');
+  }
+
+  function computeSessionState(){
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+    const active = sessions.filter(s => inSession(nowMinutes, s));
+    const london = active.find(s => s.key === 'london');
+    const ny = active.find(s => s.key === 'ny');
+    const next = nextSession(nowMinutes, nowSeconds);
+
+    if(london && ny){
+      const overlapEndSeconds = 11 * 3600;
+      return {
+        flag:'🔥',
+        name:'London + NY Overlap',
+        sub:'8:00 AM – 11:00 AM',
+        ledClass:'overlap',
+        ledText:'Best Trading Window',
+        countdownLabel:'Time left',
+        countdown:fmtCountdown(Math.max(0, overlapEndSeconds - nowSeconds)),
+        best:'8 AM – 11 AM 🔥🔥 ← Best of the day',
+        meaning:'Highest probability trades, strongest momentum, best overlap window.'
+      };
+    }
+
+    if(active.length){
+      const s = active[0];
+      let startSec = s.start * 60;
+      let endSec = s.end * 60;
+      let currentSec = nowSeconds;
+
+      if(s.start > s.end){
+        if(currentSec < endSec){
+          currentSec += 24 * 3600;
+          startSec += 24 * 3600;
+          endSec += 24 * 3600;
+        } else {
+          endSec += 24 * 3600;
+        }
+      }
+
+      return {
+        flag:s.flag,
+        name:s.name,
+        sub:sessionRange(s),
+        ledClass:s.key === 'asia' ? 'waiting' : 'active',
+        ledText:s.key === 'asia' ? 'Setup Session' : (s.key === 'london' ? 'Momentum Session' : 'Power Session'),
+        countdownLabel:'Time left',
+        countdown:fmtCountdown(Math.max(0, endSec - currentSec)),
+        best:s.best,
+        meaning:s.meaning
+      };
+    }
+
+    let transitionName = 'Transition Phase';
+    let transitionMeaning = 'Low probability trades right now.';
+    let transitionBest = 'Wait for the next tradable session.';
+    if(next.key === 'london'){
+      transitionName = 'Pre-London Setup';
+      transitionMeaning = 'Market positioning before London. Wait for momentum to build.';
+      transitionBest = 'Mark levels and wait for London momentum.';
+    } else if(next.key === 'ny'){
+      transitionName = 'Transition Phase';
+      transitionMeaning = 'Chop or fake moves are more likely. Wait for NY liquidity and confirmation.';
+      transitionBest = 'Wait for NY open.';
+    } else if(next.key === 'asia'){
+      transitionName = 'Dead Zone';
+      transitionMeaning = 'Low probability environment. Review, journal, and prepare.';
+      transitionBest = 'No trades. Wait for Asia.';
+    }
+
+    return {
+      flag:next.key === 'asia' ? '🌙' : next.flag,
+      name:transitionName,
+      sub:'Between sessions',
+      ledClass:'waiting',
+      ledText:'Waiting',
+      countdownLabel:'Next in',
+      countdown:fmtCountdown(next.until),
+      best:transitionBest,
+      meaning:transitionMeaning
+    };
+  }
+
+  function renderSession(){
+    const container = ensureSessionContainer();
+    if(!container) return;
+
+    const d = computeSessionState();
+    container.innerHTML = `
+      <div class="sessionStable">
+        <div class="top">
+          <div class="flag">${d.flag}</div>
+          <div class="name">${d.name}</div>
+        </div>
+        <div class="sub">${d.sub}</div>
+        <div class="led ${d.ledClass}">
+          <span class="dot"></span>
+          ${d.ledText}
+        </div>
+        <div class="countdown"><strong>${d.countdownLabel}:</strong> ${d.countdown}</div>
+        <div class="block">
+          <div class="label">Best</div>
+          <div class="text">${d.best}</div>
+        </div>
+        <div class="block">
+          <div class="label">Meaning</div>
+          <div class="text">${d.meaning}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindTabs(){
+    document.querySelectorAll('#mainTabs .pill[data-view]').forEach(tab => {
+      tab.onclick = function(e){
+        const viewId = this.getAttribute('data-view');
+        if(window.__facelessTradeLocked && (viewId === 'strategy' || viewId === 'live')){
+          e.preventDefault();
+          e.stopPropagation();
+          alert('🔒 Trading is locked right now.');
+          return;
+        }
+        document.querySelectorAll('#mainTabs .pill[data-view]').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        const target = byId(viewId);
+        if(target) target.classList.add('active');
+        try{ localStorage.setItem('faceless_active_view', viewId); }catch(e){}
+      };
+    });
+
+    try{
+      const savedView = localStorage.getItem('faceless_active_view');
+      if(savedView){
+        const btn = document.querySelector('#mainTabs .pill[data-view="' + savedView + '"]');
+        if(btn) btn.click();
+      }
     }catch(e){}
   }
 
-  document.addEventListener('DOMContentLoaded', bindStyleHard);
+  function bindStrategySubtabs(){
+    const tabs = document.querySelectorAll('[data-merged-strategy]');
+    if(!tabs.length) return;
+    tabs.forEach(btn => {
+      btn.onclick = function(e){
+        e.preventDefault();
+        const key = this.getAttribute('data-merged-strategy');
+        tabs.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        ['merged-icc','merged-ema','merged-sd'].forEach(id => {
+          const pane = byId(id);
+          if(pane) pane.style.display = 'none';
+        });
+        const activePane = byId('merged-' + key);
+        if(activePane) activePane.style.display = 'block';
+      };
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    bindFinalStyleMenu();
+    bindTabs();
+    bindStrategySubtabs();
+    renderSession();
+    setInterval(renderSession, 1000);
+  });
 })();
 </script>
 
