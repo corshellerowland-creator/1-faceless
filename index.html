@@ -4383,6 +4383,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 (function(){
+  window.sessionExpanded = false;
   function byId(id){ return document.getElementById(id); }
 
   function applyTheme(themeClass){
@@ -4834,39 +4835,54 @@ document.addEventListener('DOMContentLoaded', function(){
           endSec += 86400;
         }
       }
+
+      let best = '';
+      let meaning = '';
+      if(s.key === 'asia'){
+        best = '7 PM – 11 PM · 1 AM – 3 AM';
+        meaning = 'Build levels and prepare.';
+      } else if(s.key === 'london'){
+        best = '3 AM – 6 AM';
+        meaning = 'Strong directional moves and cleaner breakouts.';
+      } else if(s.key === 'ny'){
+        best = '8 AM – 11 AM · 9:30 AM open volatility';
+        meaning = 'Highest probability trades and biggest moves.';
+      }
+
       d = {
         flag:s.flag,
         name:s.name,
         countdownLabel:'Time left',
         countdown:fmtCountdown(Math.max(0, endSec - currentSec)),
-        best:s.best || '',
-        meaning:s.meaning || ''
+        best:best,
+        meaning:meaning
       };
     } else {
       let transitionName = 'Transition';
       let best = 'Wait for next session';
       let meaning = 'Lower probability environment.';
-      if(next.key === 'asia'){
-        transitionName = '🌙 Dead Zone';
-        best = 'No trades. Wait for Asia.';
-        meaning = 'Review, journal, and prepare.';
-      } else if(next.key === 'london'){
+      if(next.key === 'london'){
         transitionName = 'Pre-London';
         best = 'Mark levels and wait for London momentum.';
         meaning = 'Market positioning before London.';
+      } else if(next.key === 'asia'){
+        transitionName = 'Dead Zone';
+        best = 'No trades. Wait for Asia.';
+        meaning = 'Review, journal, and prepare.';
       }
+
       d = {
         flag: next.key === 'asia' ? '🌙' : next.flag,
         name: transitionName,
         countdownLabel:'Next in',
-        countdown:fmtCountdown(next.until),
-        best:best,
-        meaning:meaning
+        countdown: fmtCountdown(next.until),
+        best: best,
+        meaning: meaning
       };
     }
 
     container.innerHTML = `
-      <div class="sessionStable compact ${sessionExpanded ? 'expanded' : ''}" id="sessionCard">
+      <div class="sessionStable compact ${window.sessionExpanded ? 'expanded' : ''}" id="sessionCard">
         <div class="sessionMainRow">
           <div>${d.flag}</div>
           <div style="font-weight:600;">${d.name}</div>
@@ -4882,61 +4898,10 @@ document.addEventListener('DOMContentLoaded', function(){
     const card = document.getElementById('sessionCard');
     if(card){
       card.onclick = function(){
-        sessionExpanded = !sessionExpanded;
+        window.sessionExpanded = !window.sessionExpanded;
         renderCompactSession();
       };
     }
-  };
-    } else if(active.length){
-      const s = active[0];
-      let endSec = s.end * 60;
-      let currentSec = nowSeconds;
-      if(s.start > s.end){
-        if(currentSec < endSec){
-          currentSec += 86400;
-          endSec += 86400;
-        } else {
-          endSec += 86400;
-        }
-      }
-      d = {
-        flag:s.flag,
-        name:s.name,
-        sub:fmtClock(s.start) + ' – ' + fmtClock(s.end),
-        ledClass:s.key === 'asia' ? 'waiting' : 'active',
-        ledText:s.key === 'asia' ? 'Setup Session' : (s.key === 'london' ? 'Momentum Session' : 'Power Session'),
-        countdownLabel:'Time left',
-        countdown:fmtCountdown(Math.max(0, endSec - currentSec))
-      };
-    } else {
-      let transitionName = 'Transition';
-      if(next.key === 'london') transitionName = 'Pre-London';
-      else if(next.key === 'asia') transitionName = 'Dead Zone';
-      d = {
-        flag: next.key === 'asia' ? '🌙' : next.flag,
-        name: transitionName,
-        sub: 'Between sessions',
-        ledClass: 'waiting',
-        ledText: 'Waiting',
-        countdownLabel: 'Next in',
-        countdown: fmtCountdown(next.until)
-      };
-    }
-
-    container.innerHTML = `
-      <div class="sessionStable compact">
-        <div class="top">
-          <div class="flag">${d.flag}</div>
-          <div class="name">${d.name}</div>
-        </div>
-        <div class="sub">${d.sub}</div>
-        <div class="led ${d.ledClass}">
-          <span class="dot"></span>
-          <span class="ledTextInline">${d.ledText}</span>
-        </div>
-        <div class="countdown"><strong>${d.countdownLabel}:</strong> ${d.countdown}</div>
-      </div>
-    `;
   }
 
   function bindTabs(){
